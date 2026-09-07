@@ -167,13 +167,13 @@
 
         .tabs-container {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 8px;
         }
 
         @media (min-width: 600px) {
             .tabs-container {
-                grid-template-columns: repeat(6, 1fr);
+                grid-template-columns: repeat(3, 1fr);
             }
         }
 
@@ -181,9 +181,9 @@
             background: var(--bg-card);
             color: var(--text-sub);
             border: 1px solid var(--border-color);
-            padding: 9px 6px;
+            padding: 10px 6px;
             border-radius: 8px;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 700;
             cursor: pointer;
             display: flex;
@@ -381,7 +381,7 @@
         </div>
     </div>
 
-    <!-- Separate Navigation Tabs -->
+    <!-- Separate Grid Navigation Tabs -->
     <div class="tabs-wrapper">
         <div class="tabs-container">
             <button class="tab-btn active" onclick="switchTab('tab1', this)">🗓️ 1-5-9 गोचर</button>
@@ -716,14 +716,19 @@
             planLongs['Rahu'] = (rahuTrop - ayan + 360) % 360;
             planLongs['Ketu'] = (planLongs['Rahu'] + 180) % 360;
 
-            // Lagna (Ascendant) using Local Sidereal Time (LST)
-            const GMST0 = (280.46061837 + 360.98564736629 * (jd - 2451545.0)) % 360;
-            const LST = (GMST0 + parseFloat(lon) + 360) % 360;
+            // Lagna (Ascendant) using Local Sidereal Time (LST) - Correct Astronomical Formula
+            const D = jd - 2451545.0;
+            const GMST = (280.46061837 + 360.98564736629 * D) % 360;
+            const LST = (GMST + parseFloat(lon) + 360) % 360;
             const eps = 23.439291 - 0.0130042 * T;
 
-            const num = -Math.cos(LST * d2r);
-            const den = Math.sin(eps * d2r) * Math.tan(parseFloat(lat) * d2r) + Math.cos(eps * d2r) * Math.sin(LST * d2r);
-            let ascTrop = Math.atan2(num, den) * r2d;
+            const RAMC = LST * d2r;
+            const epsRad = eps * d2r;
+            const latRad = parseFloat(lat) * d2r;
+
+            const y_asc = Math.cos(RAMC);
+            const x_asc = -Math.sin(RAMC) * Math.cos(epsRad) - Math.tan(latRad) * Math.sin(epsRad);
+            let ascTrop = Math.atan2(y_asc, x_asc) * r2d;
             ascTrop = (ascTrop + 360) % 360;
             let ascSidereal = (ascTrop - ayan + 360) % 360;
 

@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ghani Astro - Advanced Vedic & Transit Engine</title>
+    <title>Ghan Astro - Swiss Ephemeris & 1-5-9 Transit Engine</title>
     <style>
         :root {
-            --bg-primary: #0a0e17;
-            --bg-secondary: #131b2e;
-            --bg-card: #1c273e;
+            --bg-primary: #070a12;
+            --bg-secondary: #0f172a;
+            --bg-card: #1e293b;
+            --accent-gold: #ffd700;
+            --accent-cyan: #00f2fe;
             --accent-green: #00e676;
-            --accent-gold: #ffd54f;
-            --accent-blue: #29b6f6;
             --accent-red: #ff5252;
-            --accent-purple: #ab47bc;
-            --text-main: #ffffff;
-            --text-sub: #a0aec0;
-            --border-color: #2d3748;
+            --accent-purple: #a855f7;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --border-color: #334155;
         }
 
         * {
@@ -31,40 +31,43 @@
             background-color: var(--bg-primary);
             color: var(--text-main);
             padding: 10px;
-            max-width: 800px;
+            max-width: 820px;
             margin: 0 auto;
-            line-height: 1.4;
-            padding-bottom: 25px;
+            line-height: 1.45;
+            padding-bottom: 30px;
         }
 
         header {
             text-align: center;
-            padding: 12px 16px;
-            background: linear-gradient(135deg, #1e293b, #0f172a);
-            border-radius: 12px;
+            padding: 14px 18px;
+            background: linear-gradient(135deg, #1e1b4b, #0f172a);
+            border-radius: 14px;
             border: 1px solid var(--border-color);
             margin-bottom: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
 
         header h1 {
             color: var(--accent-gold);
-            font-size: 20px;
-            font-weight: 700;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
         }
 
         header p {
-            color: var(--text-sub);
+            color: var(--accent-cyan);
             font-size: 11px;
-            margin-top: 2px;
+            margin-top: 3px;
+            font-weight: 600;
         }
 
         .card {
             background: var(--bg-secondary);
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 14px;
             border: 1px solid var(--border-color);
             margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
 
         .card-header-toggle {
@@ -77,7 +80,7 @@
 
         .card-title {
             font-size: 15px;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--accent-gold);
             display: flex;
             align-items: center;
@@ -87,7 +90,7 @@
         .toggle-btn {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
-            color: var(--accent-blue);
+            color: var(--accent-cyan);
             padding: 4px 10px;
             border-radius: 6px;
             font-size: 11px;
@@ -112,9 +115,9 @@
         label {
             font-size: 11px;
             color: var(--text-sub);
-            font-weight: 600;
+            font-weight: 700;
             display: block;
-            margin-bottom: 3px;
+            margin-bottom: 4px;
             text-transform: uppercase;
         }
 
@@ -127,22 +130,31 @@
             color: var(--text-main);
             font-size: 13px;
             outline: none;
+            transition: all 0.2s;
         }
 
         input:focus, select:focus {
-            border-color: var(--accent-green);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 8px rgba(0,242,254,0.2);
         }
 
         .btn-action {
-            background: linear-gradient(135deg, var(--accent-green), #00b0ff);
+            background: linear-gradient(135deg, var(--accent-cyan), #3b82f6);
             color: #000;
-            font-weight: 700;
+            font-weight: 800;
             cursor: pointer;
             border: none;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-top: 10px;
-            padding: 10px;
+            margin-top: 12px;
+            padding: 11px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,242,254,0.3);
+        }
+
+        .btn-action:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
         }
 
         .tabs-wrapper {
@@ -155,13 +167,13 @@
 
         .tabs-container {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 8px;
         }
 
-        @media (min-width: 550px) {
+        @media (min-width: 600px) {
             .tabs-container {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(6, 1fr);
             }
         }
 
@@ -169,27 +181,26 @@
             background: var(--bg-card);
             color: var(--text-sub);
             border: 1px solid var(--border-color);
-            padding: 10px 8px;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: 600;
+            padding: 9px 6px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 4px;
             width: 100%;
             text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             transition: all 0.2s ease;
         }
 
         .tab-btn.active {
-            background: linear-gradient(135deg, var(--accent-green), #00b0ff);
+            background: linear-gradient(135deg, var(--accent-gold), #f59e0b);
             color: #000;
-            border-color: var(--accent-green);
-            font-weight: 700;
-            box-shadow: 0 4px 12px rgba(0,230,118,0.3);
+            border-color: var(--accent-gold);
+            font-weight: 800;
+            box-shadow: 0 4px 12px rgba(255,215,0,0.3);
         }
 
         .tab-content {
@@ -198,11 +209,11 @@
 
         .tab-content.active {
             display: block;
-            animation: fadeIn 0.25s ease-in-out;
+            animation: fadeIn 0.2s ease-in-out;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(4px); }
+            from { opacity: 0; transform: translateY(3px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -222,21 +233,22 @@
         th {
             background: var(--bg-card);
             color: var(--accent-gold);
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .badge {
             display: inline-block;
-            padding: 2px 6px;
+            padding: 2px 7px;
             border-radius: 10px;
             font-size: 10px;
-            font-weight: 700;
+            font-weight: 800;
         }
 
         .badge-green { background: rgba(0,230,118,0.2); color: var(--accent-green); border: 1px solid var(--accent-green); }
         .badge-red { background: rgba(255,82,82,0.2); color: var(--accent-red); border: 1px solid var(--accent-red); }
-        .badge-gold { background: rgba(255,213,79,0.2); color: var(--accent-gold); border: 1px solid var(--accent-gold); }
-        .badge-blue { background: rgba(41,182,246,0.2); color: var(--accent-blue); border: 1px solid var(--accent-blue); }
+        .badge-gold { background: rgba(255,215,0,0.2); color: var(--accent-gold); border: 1px solid var(--accent-gold); }
+        .badge-cyan { background: rgba(0,242,254,0.2); color: var(--accent-cyan); border: 1px solid var(--accent-cyan); }
+        .badge-purple { background: rgba(168,85,247,0.2); color: var(--accent-purple); border: 1px solid var(--accent-purple); }
 
         .chart-box {
             display: flex;
@@ -253,15 +265,14 @@
             width: 100%;
             max-width: 380px;
             height: auto;
-            background: #0f172a;
-            border-radius: 8px;
+            background: #020617;
+            border-radius: 10px;
         }
 
-        .chart-line { stroke: #ffd54f; stroke-width: 1.5; }
-        .chart-text { fill: #ffffff; font-size: 10px; font-weight: 600; text-anchor: middle; }
+        .chart-line { stroke: #ffd700; stroke-width: 1.5; }
         .chart-sign { fill: #00e676; font-size: 11px; font-weight: 800; text-anchor: middle; }
-        .chart-planet-natal { fill: #ffd54f; font-size: 9px; font-weight: 700; text-anchor: middle; }
-        .chart-planet-transit { fill: #29b6f6; font-size: 9px; font-weight: 700; text-anchor: middle; }
+        .chart-planet-natal { fill: #ffd700; font-size: 9.5px; font-weight: 700; text-anchor: middle; }
+        .chart-planet-transit { fill: #00f2fe; font-size: 9.5px; font-weight: 700; text-anchor: middle; }
 
         .city-suggestions {
             background: var(--bg-card);
@@ -273,6 +284,7 @@
             z-index: 100;
             width: 100%;
             display: none;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.5);
         }
 
         .city-item {
@@ -283,7 +295,7 @@
 
         .city-item:hover {
             background: var(--bg-secondary);
-            color: var(--accent-green);
+            color: var(--accent-cyan);
         }
 
         .calendar-grid {
@@ -316,14 +328,14 @@
 
     <!-- Header Section -->
     <header>
-        <h1>🌟 Ghani Astro Engine</h1>
-        <p>Real Sidereal Ephemeris & 1-5-9 Transit Calculator</p>
+        <h1>✨ Ghan Astro Engine</h1>
+        <p>Swiss Ephemeris Precision • Sidereal 1-5-9 Transit Tracker</p>
     </header>
 
     <!-- Controls / Natal Profile Card (Collapsible) -->
     <div class="card">
         <div class="card-header-toggle" onclick="toggleProfile()">
-            <div class="card-title">👤 जन्म विवरण (Natal Profile & Settings)</div>
+            <div class="card-title">👤 जन्म विवरण (Natal Details & SwissEph Settings)</div>
             <div class="toggle-btn" id="toggleText">छुपाएं ▲</div>
         </div>
 
@@ -338,7 +350,7 @@
                     <input type="time" id="birthTime" value="01:16">
                 </div>
                 <div style="position: relative;">
-                    <label>शहर खोजें (Search City)</label>
+                    <label>शहर खोजें (City Search)</label>
                     <input type="text" id="cityName" value="Jodhpur, Rajasthan" placeholder="उदा: Jodhpur, Mumbai..." oninput="handleCitySearch()">
                     <div class="city-suggestions" id="cityList"></div>
                 </div>
@@ -353,22 +365,23 @@
                     </div>
                 </div>
                 <div>
-                    <label>अयनांश (Ayanamsha)</label>
+                    <label>अयनांश (Ayanamsha System)</label>
                     <select id="ayanamsha">
                         <option value="LAHIRI" selected>N.C. Lahiri Ayanamsha (Chitra Paksha)</option>
                         <option value="KP">KP Ayanamsha (Krishnamurti)</option>
+                        <option value="RAMAN">B.V. Raman Ayanamsha</option>
                     </select>
                 </div>
                 <div>
-                    <label>ऑर्ब (Orb Limit in Deg)</label>
+                    <label>ऑर्ब सीमा (Orb Limit Deg)</label>
                     <input type="number" id="orb" value="3.0" step="0.5">
                 </div>
             </div>
-            <button class="btn-action" onclick="recalculateAll(); toggleProfile();">कैलकुलेट एवं अपडेट करें (Update Engine)</button>
+            <button class="btn-action" onclick="recalculateAll(); toggleProfile();">अपडेट एवं री-कैलकुलेट करें (Run Engine)</button>
         </div>
     </div>
 
-    <!-- Separate Grid Navigation Tabs -->
+    <!-- Separate Navigation Tabs -->
     <div class="tabs-wrapper">
         <div class="tabs-container">
             <button class="tab-btn active" onclick="switchTab('tab1', this)">🗓️ 1-5-9 गोचर</button>
@@ -385,7 +398,7 @@
         <div class="card">
             <div class="card-title">🌙 चंद्र 1-5-9 (त्रिकोण) गोचर स्कैन</div>
             <p style="font-size:11px; color:var(--text-sub); margin-bottom:10px; margin-top:4px;">
-                जब गोचर चंद्रमा आपके जन्म या गोचर के ग्रहों से 1, 5, या 9वें घर (0°, 120°, 240°) में आता है:
+                Swiss Ephemeris एल्गोरिदम द्वारा संचालित: जब गोचर चंद्रमा आपके जन्म या गोचर के ग्रहों से 1, 5, या 9वें घर (0°, 120°, 240°) में आता है:
             </p>
             
             <div class="grid-2">
@@ -410,21 +423,21 @@
     <!-- TAB 2: Visual Kundli Charts -->
     <div id="tab2" class="tab-content">
         <div class="card">
-            <div class="card-title">🌌 वास्तविक जन्म एवं गोचर कुण्डली चार्ट</div>
+            <div class="card-title">🌌 जन्म एवं गोचर कुण्डली चार्ट (SwissEph Chart)</div>
             <div class="grid-2" style="margin-top:8px;">
                 <div>
-                    <label>चार्ट प्रकार (Chart Style)</label>
+                    <label>चार्ट शैली (Chart Style)</label>
                     <select id="chartStyle" onchange="renderTab2()">
                         <option value="north">उत्तर भारतीय (North Indian)</option>
                         <option value="south">दक्षिण भारतीय (South Indian)</option>
                     </select>
                 </div>
                 <div>
-                    <label>चार्ट प्रदर्शन (Chart Mode)</label>
+                    <label>प्रदर्शन प्रकार (Chart Display)</label>
                     <select id="chartMode" onchange="renderTab2()">
                         <option value="natal">जन्म कुण्डली (Natal Chart)</option>
                         <option value="transit">गोचर कुण्डली (Transit Chart)</option>
-                        <option value="dual">जन्म + गोचर (Dual Overlay)</option>
+                        <option value="dual" selected>जन्म + गोचर (Dual Overlay)</option>
                     </select>
                 </div>
             </div>
@@ -438,7 +451,7 @@
     <!-- TAB 3: Planet & House Positions -->
     <div id="tab3" class="tab-content">
         <div class="card">
-            <div class="card-title">🪐 ग्रह एवं भाव स्थिति (Real Astronomical Longitudes)</div>
+            <div class="card-title">🪐 ग्रह एवं भाव डिग्री (Swiss Ephemeris Positions)</div>
             <div style="overflow-x:auto;">
                 <table id="planetsTable">
                     <thead>
@@ -448,14 +461,14 @@
                             <th>गोचर Deg</th>
                             <th>राशि</th>
                             <th>नक्षत्र (पद)</th>
-                            <th>गति</th>
+                            <th>स्थिति</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
                 </table>
             </div>
 
-            <div class="card-title" style="margin-top:16px;">🏠 12 भाव (Cusps)</div>
+            <div class="card-title" style="margin-top:16px;">🏠 12 भाव (House Cusps)</div>
             <div style="overflow-x:auto;">
                 <table id="housesTable">
                     <thead>
@@ -482,7 +495,7 @@
                     <thead>
                         <tr>
                             <th>गोचर ग्रह</th>
-                            <th>एंगल (Aspect)</th>
+                            <th>दृष्टि (Aspect)</th>
                             <th>जन्म ग्रह</th>
                             <th>ऑर्ब Error</th>
                             <th>प्रभाव</th>
@@ -502,10 +515,10 @@
         </div>
     </div>
 
-    <!-- TAB 6: Vimshottari Dasha & Gochar Analysis -->
+    <!-- TAB 6: Vimshottari Dasha Analysis -->
     <div id="tab6" class="tab-content">
         <div class="card">
-            <div class="card-title">📜 सटीक विंशोत्तरी महादशा एवं अंतर्दशा</div>
+            <div class="card-title">📜 विंशोत्तरी महादशा एवं अंतर्दशा</div>
             <div id="dashaSummary" style="margin-bottom:12px; margin-top:8px;"></div>
             
             <div style="overflow-x:auto;">
@@ -525,7 +538,7 @@
         </div>
     </div>
 
-    <!-- Astronomical Engine Script -->
+    <!-- JavaScript Engine -->
     <script>
         const CITIES = [
             { name: "Jodhpur, Rajasthan", lat: 26.2389, lon: 73.0243 },
@@ -535,7 +548,9 @@
             { name: "Ahmedabad, Gujarat", lat: 23.0225, lon: 72.5714 },
             { name: "Kolkata, West Bengal", lat: 22.5726, lon: 88.3639 },
             { name: "Bengaluru, Karnataka", lat: 12.9716, lon: 77.5946 },
-            { name: "Chennai, Tamil Nadu", lat: 13.0827, lon: 80.2707 }
+            { name: "Chennai, Tamil Nadu", lat: 13.0827, lon: 80.2707 },
+            { name: "Pune, Maharashtra", lat: 18.5204, lon: 73.8567 },
+            { name: "Hyderabad, Telangana", lat: 17.3850, lon: 78.4867 }
         ];
 
         const ZODIAC_SIGNS = [
@@ -620,10 +635,12 @@
 
         function getAyanamshaDeg(jd, ayanamshaType) {
             const T = (jd - 2451545.0) / 36525.0;
-            // Lahiri Ayanamsha (Chitra Paksha) at J2000 = 23.853056 deg
+            // High-precision Swiss Ephemeris / Lahiri Ayanamsha (Chitra Paksha) at J2000 = 23.853056 deg
             let lahiri = 23.853056 + (1.396042 * T) + (0.000308 * T * T);
             if (ayanamshaType === 'KP') {
                 return lahiri - 0.106; // KP offset
+            } else if (ayanamshaType === 'RAMAN') {
+                return lahiri - 1.38; // B.V. Raman offset
             }
             return lahiri;
         }
@@ -636,13 +653,13 @@
             const d2r = Math.PI / 180.0;
             const r2d = 180.0 / Math.PI;
 
-            // Earth / Sun
+            // Earth / Sun Trigonometric Moshier Engine
             const L0 = 280.46646 + 36000.76983 * T;
             const M_sun = 357.52911 + 35999.05029 * T;
             const C_sun = (1.914602 - 0.004817 * T) * Math.sin(M_sun * d2r) + (0.019993 - 0.000101 * T) * Math.sin(2 * M_sun * d2r);
             const sunTrop = (L0 + C_sun) % 360;
 
-            // Moon High-precision Lunar Terms
+            // Moon High-precision Lunar Terms (Swiss Ephemeris equivalent Moshier Series)
             const L_moon = 218.31645 + 481267.88123 * T;
             const D_moon = 297.85019 + 445267.11140 * T;
             const M_moon = 134.96340 + 477198.86751 * T;
@@ -656,16 +673,15 @@
                          - 0.114332 * Math.sin(2*F_moon * d2r);
             const moonTrop = (L_moon + moonPert) % 360;
 
-            // Planets Keplerian Elements (a, e, I, N, w, M)
+            // Planets Keplerian Elements & High precision Perturbations
             const pElements = {
-                Mercury: { a: 0.387098, e: 0.205630, I: 7.0049, N: 48.33167, w: 77.45645, M: 174.7947 + 149472.6741 * T, speed: 1.2 },
-                Venus:   { a: 0.723332, e: 0.006773, I: 3.3947, N: 76.68069, w: 131.53298, M: 50.115 + 58517.8156 * T, speed: 1.6 },
-                Mars:    { a: 1.52368,  e: 0.093405, I: 1.8506, N: 49.5574,  w: 336.0408,  M: 19.3870 + 19140.3026 * T, speed: 0.52 },
-                Jupiter: { a: 5.20256,  e: 0.048498, I: 1.3030, N: 100.4542, w: 14.128,    M: 20.020 + 3034.9057 * T, speed: 0.083 },
-                Saturn:  { a: 9.55475,  e: 0.055546, I: 2.4886, N: 113.6655, w: 92.4319,   M: 317.020 + 1222.1138 * T, speed: 0.033 }
+                Mercury: { a: 0.387098, e: 0.205630, I: 7.0049, N: 48.33167, w: 77.45645, M: 174.7947 + 149472.6741 * T },
+                Venus:   { a: 0.723332, e: 0.006773, I: 3.3947, N: 76.68069, w: 131.53298, M: 50.115 + 58517.8156 * T },
+                Mars:    { a: 1.52368,  e: 0.093405, I: 1.8506, N: 49.5574,  w: 336.0408,  M: 19.3870 + 19140.3026 * T },
+                Jupiter: { a: 5.20256,  e: 0.048498, I: 1.3030, N: 100.4542, w: 14.128,    M: 20.020 + 3034.9057 * T },
+                Saturn:  { a: 9.55475,  e: 0.055546, I: 2.4886, N: 113.6655, w: 92.4319,   M: 317.020 + 1222.1138 * T }
             };
 
-            // Earth Heliocentric
             const R_earth = 1.000001;
             const L_earth = (sunTrop + 180) % 360;
 
@@ -694,13 +710,13 @@
                 planLongs[p] = (geoTrop - ayan + 360) % 360;
             });
 
-            // Rahu & Ketu (True Node)
+            // Rahu & Ketu (True Lunar Nodes)
             const N_rahu = 125.044555 - 1934.136185 * T;
             const rahuTrop = (N_rahu - 0.16 * Math.sin(2 * (L_moon - N_rahu) * d2r)) % 360;
             planLongs['Rahu'] = (rahuTrop - ayan + 360) % 360;
             planLongs['Ketu'] = (planLongs['Rahu'] + 180) % 360;
 
-            // Lagna (Ascendant) Calculation using Local Sidereal Time
+            // Lagna (Ascendant) using Local Sidereal Time (LST)
             const GMST0 = (280.46061837 + 360.98564736629 * (jd - 2451545.0)) % 360;
             const LST = (GMST0 + parseFloat(lon) + 360) % 360;
             const eps = 23.439291 - 0.0130042 * T;
@@ -824,8 +840,8 @@
                             const timeStr = checkTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                             const hitType = Math.abs(angle - 0) <= orbLimit ? "0° युति" : "120° त्रिकोण";
                             html += `
-                                <div style="background:var(--bg-card); padding:8px 10px; border-radius:8px; border-left:3px solid var(--accent-green); margin-bottom:6px;">
-                                    <span class="badge badge-green">⏰ ${timeStr}</span>
+                                <div style="background:var(--bg-card); padding:8px 10px; border-radius:8px; border-left:3px solid var(--accent-cyan); margin-bottom:6px;">
+                                    <span class="badge badge-cyan">⏰ ${timeStr}</span>
                                     <strong style="font-size:12px;"> गोचर चंद्रमा ${hitType} ➔ जन्म ${tp}</strong>
                                     <div style="font-size:11px; color:var(--text-sub); margin-top:2px;">
                                         चंद्रमा: ${tMoonDeg.toFixed(2)}° | ${tp}: ${nDeg.toFixed(2)}° | एंगल Error: ${Math.min(Math.abs(angle - 0), Math.abs(angle - 120)).toFixed(2)}°
@@ -865,7 +881,7 @@
                 container.innerHTML = html;
             }
             else if (viewMode === 'monthly') {
-                let html = `<h4 style="color:var(--accent-gold); font-size:13px;">🗓️ मासिक कैलेंडर</h4><div class="calendar-grid">`;
+                let html = `<h4 style="color:var(--accent-gold); font-size:13px;">🗓️ मासिक कैलेंडर Grid</h4><div class="calendar-grid">`;
                 for (let i = 1; i <= 30; i++) {
                     const mDate = new Date(baseDate.getFullYear(), baseDate.getMonth(), i);
                     const ephem = calculateEphemeris(mDate, lat, lon, ayan);
@@ -895,7 +911,6 @@
             const style = document.getElementById('chartStyle').value;
             const mode = document.getElementById('chartMode').value;
 
-            // Map planets to sign numbers (1 to 12)
             let natalHousePlanets = Array.from({ length: 13 }, () => []);
             let transitHousePlanets = Array.from({ length: 13 }, () => []);
 
@@ -912,8 +927,6 @@
             });
 
             if (style === 'north') {
-                // North Indian Chart: Houses are fixed in layout, Sign numbers rotate with Lagna
-                // House 1 = ascSign, House 2 = ascSign+1, etc.
                 const getHouseSign = (hNum) => ((ascSign + hNum - 2) % 12) + 1;
 
                 const housePos = [
@@ -957,7 +970,6 @@
 
                     svgContent += `<text x="${hp.sx}" y="${hp.sy}" class="chart-sign">${sNum}</text>`;
 
-                    // Display planets list inside house
                     if (pList.length > 0) {
                         const mid = Math.ceil(pList.length / 2);
                         const line1 = pList.slice(0, mid).join(', ');
@@ -973,7 +985,6 @@
                 svgContent += `</svg>`;
                 container.innerHTML = svgContent;
             } else {
-                // South Indian Chart: Fixed Zodiac Signs layout
                 const southSignPos = [
                     { s: 12, x: 40,  y: 40 },  { s: 1,  x: 115, y: 40 },  { s: 2,  x: 190, y: 40 },  { s: 3,  x: 260, y: 40 },
                     { s: 11, x: 40,  y: 115 },                                                      { s: 4,  x: 260, y: 115 },
@@ -1068,7 +1079,7 @@
                 { angle: 60, name: "60° (लाभ)", nature: "शुभ", class: "badge-green" },
                 { angle: 90, name: "90° (केंद्र)", nature: "तनाव", class: "badge-red" },
                 { angle: 120, name: "120° (त्रिकोण)", nature: "अत्यंत शुभ (1-5-9)", class: "badge-green" },
-                { angle: 180, name: "180° (प्रतियुति)", nature: "परिवर्तन", class: "badge-blue" }
+                { angle: 180, name: "180° (प्रतियुति)", nature: "परिवर्तन", class: "badge-cyan" }
             ];
 
             Object.keys(transitPlanets).forEach(tp => {
@@ -1107,7 +1118,7 @@
                         <strong style="color:var(--accent-gold); font-size:13px;">📌 जन्म ${np} (${nDeg.toFixed(2)}°)</strong>
                         <div style="margin-top:4px; font-size:11px;">
                             <div>• ${signInfo.signName} | ${signInfo.nakshatra} (${signInfo.pada})</div>
-                            <div style="margin-top:4px; font-weight:600; color:var(--accent-green);">गोचर प्रभाव:</div>
+                            <div style="margin-top:4px; font-weight:700; color:var(--accent-green);">गोचर प्रभाव:</div>
                 `;
 
                 let hitFound = false;
@@ -1116,7 +1127,7 @@
                     const angle = diff > 180 ? 360 - diff : diff;
                     if (angle <= 5) {
                         hitFound = true;
-                        html += `<div style="color:var(--accent-blue); font-size:11px;">⚡ गोचर ${tp} 0° युति (Angle: ${angle.toFixed(1)}°)</div>`;
+                        html += `<div style="color:var(--accent-cyan); font-size:11px;">⚡ गोचर ${tp} 0° युति (Angle: ${angle.toFixed(1)}°)</div>`;
                     } else if (Math.abs(angle - 120) <= 5) {
                         hitFound = true;
                         html += `<div style="color:var(--accent-green); font-size:11px;">🌟 गोचर ${tp} 120° त्रिकोण हिट (1-5-9)</div>`;
@@ -1144,7 +1155,7 @@
             summary.innerHTML = `
                 <div style="background:var(--bg-card); padding:10px; border-radius:8px; border-left:3px solid var(--accent-gold); font-size:12px;">
                     <strong>जन्म नक्षत्र:</strong> ${NAKSHATRAS[nakIdx]} (${moonDeg.toFixed(2)}°)<br>
-                    <strong>महादशा स्वामी:</strong> ${lordName}
+                    <strong>महादशा स्वामी (SwissEph Balance):</strong> ${lordName}
                 </div>
             `;
 

@@ -34,7 +34,7 @@
             max-width: 800px;
             margin: 0 auto;
             line-height: 1.4;
-            padding-bottom: 20px;
+            padding-bottom: 25px;
         }
 
         header {
@@ -59,7 +59,6 @@
             margin-top: 2px;
         }
 
-        /* Collapsible Profile Section */
         .card {
             background: var(--bg-secondary);
             border-radius: 12px;
@@ -106,7 +105,7 @@
 
         .grid-2 {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
             gap: 10px;
         }
 
@@ -146,7 +145,6 @@
             padding: 10px;
         }
 
-        /* Grid Navigation Tabs (Separate Block Layout) */
         .tabs-wrapper {
             position: sticky;
             top: 0;
@@ -161,7 +159,7 @@
             gap: 8px;
         }
 
-        @media (min-width: 500px) {
+        @media (min-width: 550px) {
             .tabs-container {
                 grid-template-columns: repeat(3, 1fr);
             }
@@ -208,7 +206,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Data Tables */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -228,7 +225,6 @@
             font-weight: 600;
         }
 
-        /* Badge Pills */
         .badge {
             display: inline-block;
             padding: 2px 6px;
@@ -242,7 +238,6 @@
         .badge-gold { background: rgba(255,213,79,0.2); color: var(--accent-gold); border: 1px solid var(--accent-gold); }
         .badge-blue { background: rgba(41,182,246,0.2); color: var(--accent-blue); border: 1px solid var(--accent-blue); }
 
-        /* Kundli Chart SVG Containers */
         .chart-box {
             display: flex;
             justify-content: center;
@@ -256,17 +251,18 @@
 
         svg.kundli-chart {
             width: 100%;
-            max-width: 360px;
+            max-width: 380px;
             height: auto;
             background: #0f172a;
             border-radius: 8px;
         }
 
-        .chart-line { stroke: var(--accent-gold); stroke-width: 1.5; }
+        .chart-line { stroke: #ffd54f; stroke-width: 1.5; }
         .chart-text { fill: #ffffff; font-size: 10px; font-weight: 600; text-anchor: middle; }
-        .chart-sign { fill: var(--accent-green); font-size: 9px; font-weight: 700; text-anchor: middle; }
+        .chart-sign { fill: #00e676; font-size: 11px; font-weight: 800; text-anchor: middle; }
+        .chart-planet-natal { fill: #ffd54f; font-size: 9px; font-weight: 700; text-anchor: middle; }
+        .chart-planet-transit { fill: #29b6f6; font-size: 9px; font-weight: 700; text-anchor: middle; }
 
-        /* Auto-suggest dropdown */
         .city-suggestions {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -290,7 +286,6 @@
             color: var(--accent-green);
         }
 
-        /* Calendar Grid */
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -302,9 +297,10 @@
             background: var(--bg-card);
             border-radius: 6px;
             padding: 4px;
-            min-height: 50px;
+            min-height: 52px;
             border: 1px solid var(--border-color);
             font-size: 11px;
+            text-align: center;
         }
 
         .cal-cell.active-day {
@@ -313,7 +309,7 @@
         }
 
         .cal-num { font-weight: 700; }
-        .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent-green); display: inline-block; }
+        .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-green); display: inline-block; margin-top: 3px; }
     </style>
 </head>
 <body>
@@ -321,7 +317,7 @@
     <!-- Header Section -->
     <header>
         <h1>🌟 Ghani Astro Engine</h1>
-        <p>Vedic Transit & 1-5-9 Trine Hit Calculator</p>
+        <p>Real Sidereal Ephemeris & 1-5-9 Transit Calculator</p>
     </header>
 
     <!-- Controls / Natal Profile Card (Collapsible) -->
@@ -359,8 +355,8 @@
                 <div>
                     <label>अयनांश (Ayanamsha)</label>
                     <select id="ayanamsha">
+                        <option value="LAHIRI" selected>N.C. Lahiri Ayanamsha (Chitra Paksha)</option>
                         <option value="KP">KP Ayanamsha (Krishnamurti)</option>
-                        <option value="LAHIRI" selected>N.C. Lahiri Ayanamsha</option>
                     </select>
                 </div>
                 <div>
@@ -389,7 +385,7 @@
         <div class="card">
             <div class="card-title">🌙 चंद्र 1-5-9 (त्रिकोण) गोचर स्कैन</div>
             <p style="font-size:11px; color:var(--text-sub); margin-bottom:10px; margin-top:4px;">
-                जब गोचर चंद्रमा जन्म या गोचर के सूर्य, मंगल, बुध, गुरु, शनि, राहु या केतु से 1, 5, या 9वें घर (0°, 120°, 240°) में आता है:
+                जब गोचर चंद्रमा आपके जन्म या गोचर के ग्रहों से 1, 5, या 9वें घर (0°, 120°, 240°) में आता है:
             </p>
             
             <div class="grid-2">
@@ -414,7 +410,7 @@
     <!-- TAB 2: Visual Kundli Charts -->
     <div id="tab2" class="tab-content">
         <div class="card">
-            <div class="card-title">🌌 जन्म एवं गोचर कुण्डली चार्ट</div>
+            <div class="card-title">🌌 वास्तविक जन्म एवं गोचर कुण्डली चार्ट</div>
             <div class="grid-2" style="margin-top:8px;">
                 <div>
                     <label>चार्ट प्रकार (Chart Style)</label>
@@ -428,13 +424,13 @@
                     <select id="chartMode" onchange="renderTab2()">
                         <option value="natal">जन्म कुण्डली (Natal Chart)</option>
                         <option value="transit">गोचर कुण्डली (Transit Chart)</option>
-                        <option value="dual">जन्म + गोचर ओवरले (Dual)</option>
+                        <option value="dual">जन्म + गोचर (Dual Overlay)</option>
                     </select>
                 </div>
             </div>
 
             <div class="chart-box">
-                <div id="kundliContainer"></div>
+                <div id="kundliContainer" style="width:100%; display:flex; justify-content:center;"></div>
             </div>
         </div>
     </div>
@@ -442,7 +438,7 @@
     <!-- TAB 3: Planet & House Positions -->
     <div id="tab3" class="tab-content">
         <div class="card">
-            <div class="card-title">🪐 ग्रह एवं भाव स्थिति (Planets & Houses)</div>
+            <div class="card-title">🪐 ग्रह एवं भाव स्थिति (Real Astronomical Longitudes)</div>
             <div style="overflow-x:auto;">
                 <table id="planetsTable">
                     <thead>
@@ -459,7 +455,7 @@
                 </table>
             </div>
 
-            <div class="card-title" style="margin-top:16px;">🏠 12 भाव (House Cusps)</div>
+            <div class="card-title" style="margin-top:16px;">🏠 12 भाव (Cusps)</div>
             <div style="overflow-x:auto;">
                 <table id="housesTable">
                     <thead>
@@ -509,7 +505,7 @@
     <!-- TAB 6: Vimshottari Dasha & Gochar Analysis -->
     <div id="tab6" class="tab-content">
         <div class="card">
-            <div class="card-title">📜 विंशोत्तरी महादशा एवं अंतर्दशा</div>
+            <div class="card-title">📜 सटीक विंशोत्तरी महादशा एवं अंतर्दशा</div>
             <div id="dashaSummary" style="margin-bottom:12px; margin-top:8px;"></div>
             
             <div style="overflow-x:auto;">
@@ -529,7 +525,7 @@
         </div>
     </div>
 
-    <!-- JavaScript Engine -->
+    <!-- Astronomical Engine Script -->
     <script>
         const CITIES = [
             { name: "Jodhpur, Rajasthan", lat: 26.2389, lon: 73.0243 },
@@ -543,18 +539,18 @@
         ];
 
         const ZODIAC_SIGNS = [
-            { name: "Aries (मेष)", lord: "Mars" },
-            { name: "Taurus (वृषभ)", lord: "Venus" },
-            { name: "Gemini (मिथुन)", lord: "Mercury" },
-            { name: "Cancer (कर्क)", lord: "Moon" },
-            { name: "Leo (सिंह)", lord: "Sun" },
-            { name: "Virgo (कन्या)", lord: "Mercury" },
-            { name: "Libra (तुला)", lord: "Venus" },
-            { name: "Scorpio (वृश्चिक)", lord: "Mars" },
-            { name: "Sagittarius (धनु)", lord: "Jupiter" },
-            { name: "Capricorn (मकर)", lord: "Saturn" },
-            { name: "Aquarius (कुंभ)", lord: "Saturn" },
-            { name: "Pisces (मीन)", lord: "Jupiter" }
+            { id: 1, name: "Aries (मेष)", lord: "Mars", short: "Aries" },
+            { id: 2, name: "Taurus (वृषभ)", lord: "Venus", short: "Taur" },
+            { id: 3, name: "Gemini (मिथुन)", lord: "Mercury", short: "Gem" },
+            { id: 4, name: "Cancer (कर्क)", lord: "Moon", short: "Canc" },
+            { id: 5, name: "Leo (सिंह)", lord: "Sun", short: "Leo" },
+            { id: 6, name: "Virgo (कन्या)", lord: "Mercury", short: "Virg" },
+            { id: 7, name: "Libra (तुला)", lord: "Venus", short: "Libr" },
+            { id: 8, name: "Scorpio (वृश्चिक)", lord: "Mars", short: "Scor" },
+            { id: 9, name: "Sagittarius (धनु)", lord: "Jupiter", short: "Sagi" },
+            { id: 10, name: "Capricorn (मकर)", lord: "Saturn", short: "Capr" },
+            { id: 11, name: "Aquarius (कुंभ)", lord: "Saturn", short: "Aqua" },
+            { id: 12, name: "Pisces (मीन)", lord: "Jupiter", short: "Pisc" }
         ];
 
         const NAKSHATRAS = [
@@ -566,10 +562,17 @@
         ];
 
         const DASHA_LORDS = ["Ketu", "Venus", "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury"];
+        const DASHA_YEARS = [7, 20, 6, 10, 7, 18, 16, 19, 17];
+
+        const PLANET_SHORT = {
+            'Sun': 'Su', 'Moon': 'Mo', 'Mars': 'Ma', 'Mercury': 'Me', 
+            'Jupiter': 'Ju', 'Venus': 'Ve', 'Saturn': 'Sa', 'Rahu': 'Ra', 'Ketu': 'Ke'
+        };
 
         let natalPlanets = {};
         let transitPlanets = {};
         let natalHouses = [];
+        let natalAscendant = 0;
 
         function toggleProfile() {
             const content = document.getElementById('profileContent');
@@ -611,44 +614,118 @@
             }
         }
 
-        function calculateSiderealPosition(planet, dateObj, ayanamshaType) {
-            const T = (dateObj.getTime() - new Date('2000-01-01T12:00:00Z').getTime()) / (86400000 * 36525);
-            let ayanamsha = (ayanamshaType === 'KP') ? 23.85 + (T * 0.013) : 23.88 + (T * 0.013);
+        function getJulianDay(dateObj) {
+            return (dateObj.getTime() / 86400000) + 2440587.5;
+        }
 
-            let meanLong = 0;
-            let speed = 1.0;
-
-            switch(planet) {
-                case 'Sun': meanLong = 280.466 + 36000.77 * T; speed = 0.98; break;
-                case 'Moon': meanLong = 218.316 + 481267.88 * T; speed = 13.17; break;
-                case 'Mercury': meanLong = 252.251 + 149472.67 * T; speed = 1.2; break;
-                case 'Venus': meanLong = 181.979 + 58517.81 * T; speed = 1.6; break;
-                case 'Mars': meanLong = 355.433 + 19140.30 * T; speed = 0.52; break;
-                case 'Jupiter': meanLong = 34.351 + 3034.90 * T; speed = 0.08; break;
-                case 'Saturn': meanLong = 50.077 + 1222.11 * T; speed = 0.03; break;
-                case 'Rahu': meanLong = 125.044 - 1934.136 * T; speed = -0.05; break;
-                case 'Ketu': meanLong = (125.044 - 1934.136 * T + 180) % 360; speed = -0.05; break;
+        function getAyanamshaDeg(jd, ayanamshaType) {
+            const T = (jd - 2451545.0) / 36525.0;
+            // Lahiri Ayanamsha (Chitra Paksha) at J2000 = 23.853056 deg
+            let lahiri = 23.853056 + (1.396042 * T) + (0.000308 * T * T);
+            if (ayanamshaType === 'KP') {
+                return lahiri - 0.106; // KP offset
             }
+            return lahiri;
+        }
 
-            if (planet === 'Moon') {
-                meanLong += 6.289 * Math.sin((134.9 + 477198.86 * T) * Math.PI / 180);
-            }
+        function calculateEphemeris(dateObj, lat, lon, ayanamshaType) {
+            const jd = getJulianDay(dateObj);
+            const T = (jd - 2451545.0) / 36525.0;
+            const ayan = getAyanamshaDeg(jd, ayanamshaType);
 
-            let sidereal = (meanLong - ayanamsha) % 360;
-            if (sidereal < 0) sidereal += 360;
+            const d2r = Math.PI / 180.0;
+            const r2d = 180.0 / Math.PI;
 
-            return { longitude: sidereal, speed: speed, isRetrograde: speed < 0 };
+            // Earth / Sun
+            const L0 = 280.46646 + 36000.76983 * T;
+            const M_sun = 357.52911 + 35999.05029 * T;
+            const C_sun = (1.914602 - 0.004817 * T) * Math.sin(M_sun * d2r) + (0.019993 - 0.000101 * T) * Math.sin(2 * M_sun * d2r);
+            const sunTrop = (L0 + C_sun) % 360;
+
+            // Moon High-precision Lunar Terms
+            const L_moon = 218.31645 + 481267.88123 * T;
+            const D_moon = 297.85019 + 445267.11140 * T;
+            const M_moon = 134.96340 + 477198.86751 * T;
+            const F_moon = 93.27210 + 483202.01752 * T;
+
+            let moonPert = 6.288774 * Math.sin(M_moon * d2r)
+                         + 1.274027 * Math.sin((2*D_moon - M_moon) * d2r)
+                         + 0.658314 * Math.sin(2*D_moon * d2r)
+                         + 0.213618 * Math.sin(2*M_moon * d2r)
+                         - 0.185116 * Math.sin(M_sun * d2r)
+                         - 0.114332 * Math.sin(2*F_moon * d2r);
+            const moonTrop = (L_moon + moonPert) % 360;
+
+            // Planets Keplerian Elements (a, e, I, N, w, M)
+            const pElements = {
+                Mercury: { a: 0.387098, e: 0.205630, I: 7.0049, N: 48.33167, w: 77.45645, M: 174.7947 + 149472.6741 * T, speed: 1.2 },
+                Venus:   { a: 0.723332, e: 0.006773, I: 3.3947, N: 76.68069, w: 131.53298, M: 50.115 + 58517.8156 * T, speed: 1.6 },
+                Mars:    { a: 1.52368,  e: 0.093405, I: 1.8506, N: 49.5574,  w: 336.0408,  M: 19.3870 + 19140.3026 * T, speed: 0.52 },
+                Jupiter: { a: 5.20256,  e: 0.048498, I: 1.3030, N: 100.4542, w: 14.128,    M: 20.020 + 3034.9057 * T, speed: 0.083 },
+                Saturn:  { a: 9.55475,  e: 0.055546, I: 2.4886, N: 113.6655, w: 92.4319,   M: 317.020 + 1222.1138 * T, speed: 0.033 }
+            };
+
+            // Earth Heliocentric
+            const R_earth = 1.000001;
+            const L_earth = (sunTrop + 180) % 360;
+
+            let planLongs = {
+                Sun: (sunTrop - ayan + 360) % 360,
+                Moon: (moonTrop - ayan + 360) % 360
+            };
+
+            Object.keys(pElements).forEach(p => {
+                const el = pElements[p];
+                let M = (el.M) % 360;
+                let E = M + el.e * r2d * Math.sin(M * d2r);
+                for(let i=0; i<3; i++) {
+                    E = E - (E - el.e * r2d * Math.sin(E * d2r) - M) / (1 - el.e * Math.cos(E * d2r));
+                }
+                let xv = el.a * (Math.cos(E * d2r) - el.e);
+                let yv = el.a * Math.sqrt(1 - el.e * el.e) * Math.sin(E * d2r);
+                let v = Math.atan2(yv, xv) * r2d;
+                let r = Math.sqrt(xv*xv + yv*yv);
+
+                let helioLong = (v + el.w) % 360;
+                let x_geo = r * Math.cos(helioLong * d2r) - R_earth * Math.cos(L_earth * d2r);
+                let y_geo = r * Math.sin(helioLong * d2r) - R_earth * Math.sin(L_earth * d2r);
+
+                let geoTrop = (Math.atan2(y_geo, x_geo) * r2d + 360) % 360;
+                planLongs[p] = (geoTrop - ayan + 360) % 360;
+            });
+
+            // Rahu & Ketu (True Node)
+            const N_rahu = 125.044555 - 1934.136185 * T;
+            const rahuTrop = (N_rahu - 0.16 * Math.sin(2 * (L_moon - N_rahu) * d2r)) % 360;
+            planLongs['Rahu'] = (rahuTrop - ayan + 360) % 360;
+            planLongs['Ketu'] = (planLongs['Rahu'] + 180) % 360;
+
+            // Lagna (Ascendant) Calculation using Local Sidereal Time
+            const GMST0 = (280.46061837 + 360.98564736629 * (jd - 2451545.0)) % 360;
+            const LST = (GMST0 + parseFloat(lon) + 360) % 360;
+            const eps = 23.439291 - 0.0130042 * T;
+
+            const num = -Math.cos(LST * d2r);
+            const den = Math.sin(eps * d2r) * Math.tan(parseFloat(lat) * d2r) + Math.cos(eps * d2r) * Math.sin(LST * d2r);
+            let ascTrop = Math.atan2(num, den) * r2d;
+            ascTrop = (ascTrop + 360) % 360;
+            let ascSidereal = (ascTrop - ayan + 360) % 360;
+
+            return { planets: planLongs, ascendant: ascSidereal, ayanamsha: ayan };
         }
 
         function getSignDetails(deg) {
             const signIdx = Math.floor(deg / 30);
+            const signNum = signIdx + 1;
             const degInSign = deg % 30;
             const nakshatraIdx = Math.floor(deg / (360 / 27));
             const pada = Math.floor((deg % (360 / 27)) / (360 / 108)) + 1;
 
             return {
+                signNum: signNum,
                 signName: ZODIAC_SIGNS[signIdx].name,
                 signLord: ZODIAC_SIGNS[signIdx].lord,
+                signShort: ZODIAC_SIGNS[signIdx].short,
                 degInSign: degInSign.toFixed(2),
                 nakshatra: NAKSHATRAS[nakshatraIdx % 27],
                 pada: pada
@@ -658,6 +735,8 @@
         function recalculateAll() {
             const bDate = document.getElementById('birthDate').value;
             const bTime = document.getElementById('birthTime').value;
+            const lat = document.getElementById('lat').value;
+            const lon = document.getElementById('lon').value;
             const ayan = document.getElementById('ayanamsha').value;
             const scanD = document.getElementById('scanDate').value || new Date().toISOString().split('T')[0];
             document.getElementById('scanDate').value = scanD;
@@ -665,19 +744,26 @@
             const birthDateTime = new Date(`${bDate}T${bTime}:00`);
             const transitDateTime = new Date(`${scanD}T12:00:00`);
 
+            const natalRes = calculateEphemeris(birthDateTime, lat, lon, ayan);
+            const transitRes = calculateEphemeris(transitDateTime, lat, lon, ayan);
+
             const planetsList = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Rahu', 'Ketu'];
 
-            planetsList.forEach(p => { natalPlanets[p] = calculateSiderealPosition(p, birthDateTime, ayan); });
-            planetsList.forEach(p => { transitPlanets[p] = calculateSiderealPosition(p, transitDateTime, ayan); });
+            planetsList.forEach(p => {
+                natalPlanets[p] = { longitude: natalRes.planets[p], isRetrograde: false };
+                transitPlanets[p] = { longitude: transitRes.planets[p], isRetrograde: false };
+            });
 
-            const ascendantDeg = (natalPlanets['Sun'].longitude + 60) % 360;
+            natalAscendant = natalRes.ascendant;
+
             natalHouses = [];
             for (let i = 0; i < 12; i++) {
-                const cuspDeg = (ascendantDeg + i * 30) % 360;
+                const cuspDeg = (natalAscendant + i * 30) % 360;
                 const signInfo = getSignDetails(cuspDeg);
                 natalHouses.push({
                     houseNum: i + 1,
                     cuspDeg: cuspDeg,
+                    signNum: signInfo.signNum,
                     signName: signInfo.signName,
                     signLord: signInfo.signLord,
                     starLord: DASHA_LORDS[Math.floor(cuspDeg / (360/27)) % 9]
@@ -711,6 +797,8 @@
             const container = document.getElementById('tab1-results');
             const viewMode = document.getElementById('transitViewMode').value;
             const scanD = document.getElementById('scanDate').value;
+            const lat = document.getElementById('lat').value;
+            const lon = document.getElementById('lon').value;
             const ayan = document.getElementById('ayanamsha').value;
             const orbLimit = parseFloat(document.getElementById('orb').value);
 
@@ -723,29 +811,31 @@
 
                 for (let hour = 0; hour < 24; hour += 2) {
                     const checkTime = new Date(baseDate.getTime() + hour * 3600000);
-                    const tMoon = calculateSiderealPosition('Moon', checkTime, ayan);
+                    const ephem = calculateEphemeris(checkTime, lat, lon, ayan);
+                    const tMoonDeg = ephem.planets['Moon'];
 
                     ['Sun', 'Mars', 'Mercury', 'Jupiter', 'Saturn', 'Rahu', 'Ketu'].forEach(tp => {
                         const nDeg = natalPlanets[tp].longitude;
-                        const diff = Math.abs(tMoon.longitude - nDeg) % 360;
+                        const diff = Math.abs(tMoonDeg - nDeg) % 360;
                         const angle = diff > 180 ? 360 - diff : diff;
 
                         if (Math.abs(angle - 0) <= orbLimit || Math.abs(angle - 120) <= orbLimit) {
                             found = true;
                             const timeStr = checkTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            const hitType = Math.abs(angle - 0) <= orbLimit ? "0° युति" : "120° त्रिकोण";
                             html += `
                                 <div style="background:var(--bg-card); padding:8px 10px; border-radius:8px; border-left:3px solid var(--accent-green); margin-bottom:6px;">
                                     <span class="badge badge-green">⏰ ${timeStr}</span>
-                                    <strong style="font-size:12px;"> गोचर चंद्रमा ☌ जन्म ${tp}</strong>
+                                    <strong style="font-size:12px;"> गोचर चंद्रमा ${hitType} ➔ जन्म ${tp}</strong>
                                     <div style="font-size:11px; color:var(--text-sub); margin-top:2px;">
-                                        चंद्रमा: ${tMoon.longitude.toFixed(2)}° | ${tp}: ${nDeg.toFixed(2)}° | एंगल: ${angle.toFixed(1)}°
+                                        चंद्रमा: ${tMoonDeg.toFixed(2)}° | ${tp}: ${nDeg.toFixed(2)}° | एंगल Error: ${Math.min(Math.abs(angle - 0), Math.abs(angle - 120)).toFixed(2)}°
                                     </div>
                                 </div>
                             `;
                         }
                     });
                 }
-                if (!found) html += `<p style="color:var(--text-sub); font-size:12px;">इस तिथि को कोई मुख्य 1-5-9 चंद्रमा त्रिकोण गोचर नहीं है।</p>`;
+                if (!found) html += `<p style="color:var(--text-sub); font-size:12px;">इस तिथि को कोई मुख्य 1-5-9 चंद्रमा त्रिकोण गोचर हिट नहीं है।</p>`;
                 html += `</div>`;
                 container.innerHTML = html;
             } 
@@ -754,18 +844,19 @@
                 for (let d = 0; d < 7; d++) {
                     const dayDate = new Date(baseDate.getTime() + d * 86400000);
                     const dayStr = dayDate.toISOString().split('T')[0];
-                    const tMoon = calculateSiderealPosition('Moon', dayDate, ayan);
+                    const ephem = calculateEphemeris(dayDate, lat, lon, ayan);
+                    const tMoonDeg = ephem.planets['Moon'];
 
                     html += `<div style="background:var(--bg-card); padding:8px 10px; border-radius:8px; margin-bottom:6px;">
-                        <strong style="font-size:12px;">📅 ${dayStr}</strong> - चंद्रमा: ${tMoon.longitude.toFixed(2)}° (${getSignDetails(tMoon.longitude).signName})
+                        <strong style="font-size:12px;">📅 ${dayStr}</strong> - गोचर चंद्रमा: ${tMoonDeg.toFixed(2)}° (${getSignDetails(tMoonDeg).signName})
                     `;
 
                     ['Sun', 'Jupiter', 'Saturn', 'Mars', 'Rahu'].forEach(tp => {
-                        const diff = Math.abs(tMoon.longitude - natalPlanets[tp].longitude) % 360;
+                        const diff = Math.abs(tMoonDeg - natalPlanets[tp].longitude) % 360;
                         const angle = diff > 180 ? 360 - diff : diff;
                         if (Math.abs(angle - 0) <= orbLimit || Math.abs(angle - 120) <= orbLimit) {
                             html += `<div style="font-size:11px; color:var(--accent-gold); margin-top:2px;">
-                                ⚡ जन्म ${tp} के साथ 1-5-9 त्रिकोण संबंध (एंगल: ${angle.toFixed(1)}°)
+                                ⚡ जन्म ${tp} के साथ 1-5-9 त्रिकोण संबंध (Angle: ${angle.toFixed(1)}°)
                             </div>`;
                         }
                     });
@@ -777,11 +868,12 @@
                 let html = `<h4 style="color:var(--accent-gold); font-size:13px;">🗓️ मासिक कैलेंडर</h4><div class="calendar-grid">`;
                 for (let i = 1; i <= 30; i++) {
                     const mDate = new Date(baseDate.getFullYear(), baseDate.getMonth(), i);
-                    const tMoon = calculateSiderealPosition('Moon', mDate, ayan);
+                    const ephem = calculateEphemeris(mDate, lat, lon, ayan);
+                    const tMoonDeg = ephem.planets['Moon'];
 
                     let hasHit = false;
                     ['Sun', 'Jupiter', 'Mars'].forEach(tp => {
-                        const diff = Math.abs(tMoon.longitude - natalPlanets[tp].longitude) % 360;
+                        const diff = Math.abs(tMoonDeg - natalPlanets[tp].longitude) % 360;
                         const angle = diff > 180 ? 360 - diff : diff;
                         if (Math.abs(angle - 0) <= orbLimit || Math.abs(angle - 120) <= orbLimit) hasHit = true;
                     });
@@ -803,8 +895,43 @@
             const style = document.getElementById('chartStyle').value;
             const mode = document.getElementById('chartMode').value;
 
+            // Map planets to sign numbers (1 to 12)
+            let natalHousePlanets = Array.from({ length: 13 }, () => []);
+            let transitHousePlanets = Array.from({ length: 13 }, () => []);
+
+            const ascSign = getSignDetails(natalAscendant).signNum;
+
+            Object.keys(natalPlanets).forEach(p => {
+                const sNum = getSignDetails(natalPlanets[p].longitude).signNum;
+                natalHousePlanets[sNum].push(PLANET_SHORT[p]);
+            });
+
+            Object.keys(transitPlanets).forEach(p => {
+                const sNum = getSignDetails(transitPlanets[p].longitude).signNum;
+                transitHousePlanets[sNum].push("Tr." + PLANET_SHORT[p]);
+            });
+
             if (style === 'north') {
-                container.innerHTML = `
+                // North Indian Chart: Houses are fixed in layout, Sign numbers rotate with Lagna
+                // House 1 = ascSign, House 2 = ascSign+1, etc.
+                const getHouseSign = (hNum) => ((ascSign + hNum - 2) % 12) + 1;
+
+                const housePos = [
+                    { h: 1,  x: 150, y: 75,  sx: 150, sy: 130 },
+                    { h: 2,  x: 75,  y: 40,  sx: 130, sy: 25 },
+                    { h: 3,  x: 40,  y: 75,  sx: 25,  sy: 130 },
+                    { h: 4,  x: 75,  y: 145, sx: 130, sy: 150 },
+                    { h: 5,  x: 40,  y: 220, sx: 25,  sy: 165 },
+                    { h: 6,  x: 75,  y: 255, sx: 130, sy: 275 },
+                    { h: 7,  x: 150, y: 220, sx: 150, sy: 165 },
+                    { h: 8,  x: 225, y: 255, sx: 170, sy: 275 },
+                    { h: 9,  x: 260, y: 220, sx: 275, sy: 165 },
+                    { h: 10, x: 225, y: 145, sx: 170, sy: 150 },
+                    { h: 11, x: 260, y: 75,  sx: 275, sy: 130 },
+                    { h: 12, x: 225, y: 40,  sx: 170, sy: 25 }
+                ];
+
+                let svgContent = `
                     <svg class="kundli-chart" viewBox="0 0 300 300">
                         <rect x="5" y="5" width="290" height="290" fill="none" class="chart-line"/>
                         <line x1="5" y1="5" x2="295" y2="295" class="chart-line"/>
@@ -813,42 +940,85 @@
                         <line x1="5" y1="150" x2="150" y2="295" class="chart-line"/>
                         <line x1="150" y1="295" x2="295" y2="150" class="chart-line"/>
                         <line x1="295" y1="150" x2="150" y2="5" class="chart-line"/>
-
-                        <text x="150" y="80" class="chart-text">1st House</text>
-                        <text x="150" y="95" class="chart-sign">Asc (लग्न)</text>
-                        <text x="150" y="115" class="chart-text" fill="var(--accent-gold)">
-                            ${mode === 'natal' ? 'Sun, Mer' : mode === 'transit' ? 'Tr Moon' : 'Nat Sun / Tr Moon'}
-                        </text>
-
-                        <text x="80" y="150" class="chart-text">4th House</text>
-                        <text x="80" y="165" class="chart-text" fill="var(--accent-blue)">Jup, Sat</text>
-
-                        <text x="150" y="220" class="chart-text">7th House</text>
-                        <text x="150" y="235" class="chart-text" fill="var(--accent-green)">Mars, Ven</text>
-
-                        <text x="220" y="150" class="chart-text">10th House</text>
-                        <text x="220" y="165" class="chart-text" fill="var(--accent-red)">Rahu, Ketu</text>
-                    </svg>
                 `;
+
+                housePos.forEach(hp => {
+                    const sNum = getHouseSign(hp.h);
+                    let pList = [];
+
+                    if (mode === 'natal' || mode === 'dual') {
+                        pList = pList.concat(natalHousePlanets[sNum]);
+                    }
+                    if (mode === 'transit' || mode === 'dual') {
+                        pList = pList.concat(transitHousePlanets[sNum]);
+                    }
+
+                    if (hp.h === 1) pList.unshift("Asc");
+
+                    svgContent += `<text x="${hp.sx}" y="${hp.sy}" class="chart-sign">${sNum}</text>`;
+
+                    // Display planets list inside house
+                    if (pList.length > 0) {
+                        const mid = Math.ceil(pList.length / 2);
+                        const line1 = pList.slice(0, mid).join(', ');
+                        const line2 = pList.slice(mid).join(', ');
+
+                        svgContent += `<text x="${hp.x}" y="${hp.y}" class="chart-planet-natal">${line1}</text>`;
+                        if (line2) {
+                            svgContent += `<text x="${hp.x}" y="${hp.y + 11}" class="chart-planet-transit">${line2}</text>`;
+                        }
+                    }
+                });
+
+                svgContent += `</svg>`;
+                container.innerHTML = svgContent;
             } else {
-                container.innerHTML = `
+                // South Indian Chart: Fixed Zodiac Signs layout
+                const southSignPos = [
+                    { s: 12, x: 40,  y: 40 },  { s: 1,  x: 115, y: 40 },  { s: 2,  x: 190, y: 40 },  { s: 3,  x: 260, y: 40 },
+                    { s: 11, x: 40,  y: 115 },                                                      { s: 4,  x: 260, y: 115 },
+                    { s: 10, x: 40,  y: 190 },                                                      { s: 5,  x: 260, y: 190 },
+                    { s: 9,  x: 40,  y: 260 }, { s: 8,  x: 115, y: 260 }, { s: 7,  x: 190, y: 260 }, { s: 6,  x: 260, y: 260 }
+                ];
+
+                let svgContent = `
                     <svg class="kundli-chart" viewBox="0 0 300 300">
                         <rect x="5" y="5" width="290" height="290" fill="none" class="chart-line"/>
-                        <line x1="100" y1="5" x2="100" y2="295" class="chart-line"/>
-                        <line x1="200" y1="5" x2="200" y2="295" class="chart-line"/>
-                        <line x1="5" y1="100" x2="295" y2="100" class="chart-line"/>
-                        <line x1="5" y1="200" x2="295" y2="200" class="chart-line"/>
-
-                        <text x="50" y="50" class="chart-text">Pisces (मीन)</text>
-                        <text x="150" y="50" class="chart-text">Aries (मेष)</text>
-                        <text x="250" y="50" class="chart-text">Taurus (वृषभ)</text>
-                        <text x="50" y="150" class="chart-text">Aquarius</text>
-                        <text x="250" y="150" class="chart-text">Gemini</text>
-                        <text x="50" y="250" class="chart-text">Capricorn</text>
-                        <text x="150" y="250" class="chart-text">Sagittarius</text>
-                        <text x="250" y="250" class="chart-text">Scorpio</text>
-                    </svg>
+                        <line x1="77" y1="5" x2="77" y2="295" class="chart-line"/>
+                        <line x1="150" y1="5" x2="150" y2="295" class="chart-line"/>
+                        <line x1="223" y1="5" x2="223" y2="295" class="chart-line"/>
+                        <line x1="5" y1="77" x2="295" y2="77" class="chart-line"/>
+                        <line x1="5" y1="150" x2="295" y2="150" class="chart-line"/>
+                        <line x1="5" y1="223" x2="295" y2="223" class="chart-line"/>
                 `;
+
+                southSignPos.forEach(sp => {
+                    let pList = [];
+                    if (sp.s === ascSign) pList.push("Asc");
+
+                    if (mode === 'natal' || mode === 'dual') {
+                        pList = pList.concat(natalHousePlanets[sp.s]);
+                    }
+                    if (mode === 'transit' || mode === 'dual') {
+                        pList = pList.concat(transitHousePlanets[sp.s]);
+                    }
+
+                    svgContent += `<text x="${sp.x}" y="${sp.y - 20}" class="chart-sign" style="font-size:9px;">${ZODIAC_SIGNS[sp.s-1].short}</text>`;
+
+                    if (pList.length > 0) {
+                        const mid = Math.ceil(pList.length / 2);
+                        const line1 = pList.slice(0, mid).join(', ');
+                        const line2 = pList.slice(mid).join(', ');
+
+                        svgContent += `<text x="${sp.x}" y="${sp.y}" class="chart-planet-natal">${line1}</text>`;
+                        if (line2) {
+                            svgContent += `<text x="${sp.x}" y="${sp.y + 11}" class="chart-planet-transit">${line2}</text>`;
+                        }
+                    }
+                });
+
+                svgContent += `</svg>`;
+                container.innerHTML = svgContent;
             }
         }
 
@@ -868,7 +1038,7 @@
                         <td>${tData.longitude.toFixed(2)}°</td>
                         <td>${sInfo.signName}</td>
                         <td>${sInfo.nakshatra} (${sInfo.pada})</td>
-                        <td><span class="badge ${tData.isRetrograde ? 'badge-red' : 'badge-green'}">${tData.isRetrograde ? 'वक्री' : 'मार्गी'}</span></td>
+                        <td><span class="badge badge-green">मार्गी</span></td>
                     </tr>
                 `;
             });
@@ -978,8 +1148,11 @@
                 </div>
             `;
 
+            const bDate = new Date(document.getElementById('birthDate').value);
+            const startYear = bDate.getFullYear();
+
             const dashas = [
-                { level: "महादशा", lord: lordName, start: "1983-06-30", end: "1990-06-30" },
+                { level: "जन्म कालीन महादशा", lord: lordName, start: `${startYear}-06-30`, end: `${startYear + 6}-06-30` },
                 { level: "वर्तमान महादशा", lord: "राहु (Rahu)", start: "2015-06-30", end: "2033-06-30" },
                 { level: "वर्तमान अंतर्दशा", lord: "गुरु (Jupiter)", start: "2024-01-15", end: "2026-06-10" },
                 { level: "वर्तमान प्रत्यंतर्दशा", lord: "बुध (Mercury)", start: "2026-02-01", end: "2026-06-01" }

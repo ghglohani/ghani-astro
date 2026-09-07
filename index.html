@@ -1,1 +1,860 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ghani Astro - 1-5-9 Moon Transit & Natal Engine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --bg-color: #070a12;
+            --card-bg: #111827;
+            --card-border: #1f293d;
+            --accent-gold: #f59e0b;
+            --accent-cyan: #06b6d4;
+            --accent-purple: #a855f7;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --text-main: #f3f4f6;
+            --text-sub: #9ca3af;
+        }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-color); color: var(--text-main); padding: 10px; font-size: 14px; line-height: 1.4; min-height: 100vh; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+
+        .app-header { text-align: center; padding: 14px 10px; background: linear-gradient(135deg, #1e1b4b, #0f172a); border-radius: 14px; border: 1px solid #312e81; margin-bottom: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+        .app-header h1 { font-size: 1.4rem; color: var(--accent-gold); font-weight: 800; letter-spacing: 0.5px; }
+        .app-header p { font-size: 0.78rem; color: #cbd5e1; margin-top: 2px; }
+
+        .card { background: var(--card-bg); border-radius: 12px; padding: 12px; margin-bottom: 12px; border: 1px solid var(--card-border); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .card-title { font-size: 0.92rem; font-weight: bold; color: var(--accent-gold); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1f2937; padding-bottom: 6px; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+        label { display: block; font-size: 0.7rem; color: var(--text-sub); margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        input, select, button { width: 100%; padding: 9px; border-radius: 8px; border: 1px solid var(--card-border); background: #0b0f19; color: var(--text-main); font-size: 0.85rem; outline: none; transition: all 0.2s; }
+        input:focus, select:focus { border-color: var(--accent-cyan); box-shadow: 0 0 8px rgba(6, 182, 212, 0.3); }
+
+        button.btn-primary { background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-weight: 700; border: none; cursor: pointer; }
+        button.btn-primary:active { transform: scale(0.98); }
+        button.btn-secondary { background: linear-gradient(135deg, #06b6d4, #0891b2); color: #000; font-weight: 700; border: none; cursor: pointer; }
+
+        .tabs-header { display: flex !important; flex-direction: row !important; overflow-x: auto !important; gap: 6px; margin-bottom: 12px; padding-bottom: 4px; scrollbar-width: none; }
+        .tabs-header::-webkit-scrollbar { display: none; }
+        .tab-btn { flex: 0 0 auto !important; width: auto !important; padding: 8px 12px; background: var(--card-bg); border-radius: 8px; font-size: 0.78rem; font-weight: 600; color: var(--text-sub); border: 1px solid var(--card-border); cursor: pointer; white-space: nowrap; }
+        .tab-btn.active { background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; border-color: var(--accent-gold); font-weight: bold; }
+
+        .tab-content { display: none !important; }
+        .tab-content.active { display: block !important; }
+
+        .trine-card { background: #0f172a; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; border-left: 4px solid var(--accent-gold); border-top: 1px solid #1e293b; border-right: 1px solid #1e293b; border-bottom: 1px solid #1e293b; }
+        .trine-card.trine-1 { border-left-color: var(--accent-gold); } /* 1st House / Conjunction */
+        .trine-card.trine-5 { border-left-color: var(--accent-cyan); } /* 5th House */
+        .trine-card.trine-9 { border-left-color: var(--accent-purple); } /* 9th House */
+
+        .trine-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; color: #000; }
+        .badge-1 { background: var(--accent-gold); }
+        .badge-5 { background: var(--accent-cyan); }
+        .badge-9 { background: var(--accent-purple); }
+
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
+        .cal-day-head { font-size: 0.7rem; color: var(--text-sub); font-weight: bold; padding: 4px 0; }
+        .cal-day-cell { background: #0f172a; border: 1px solid var(--card-border); border-radius: 6px; min-height: 54px; padding: 4px 2px; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; align-items: center; transition: background 0.2s; }
+        .cal-day-cell:hover { background: #1e293b; }
+        .cal-day-cell.today { border-color: var(--accent-gold); background: #1e1b4b; }
+        .cal-day-num { font-size: 0.75rem; font-weight: bold; }
+        .cal-indicator { font-size: 0.6rem; border-radius: 3px; padding: 1px 2px; width: 95%; font-weight: bold; margin-top: 2px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+        /* Kundli Chart Styling */
+        .kundli-box { width: 100%; max-width: 360px; height: 360px; margin: 0 auto; position: relative; background: #0b0f19; border: 2px solid var(--accent-gold); border-radius: 12px; box-shadow: 0 0 15px rgba(245, 158, 11, 0.15); }
+        .kundli-line { position: absolute; background: var(--card-border); }
+        .house-number { position: absolute; font-size: 0.65rem; color: #6b7280; font-weight: bold; }
+        .house-planets { position: absolute; font-size: 0.72rem; display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; align-items: center; width: 70px; text-align: center; }
+        .planet-tag { padding: 1px 3px; border-radius: 3px; font-size: 0.65rem; font-weight: bold; }
+        .p-natal { background: #1e293b; color: #f59e0b; border: 1px solid #d97706; }
+        .p-transit { background: #0369a1; color: #38bdf8; border: 1px solid #0284c7; }
+    </style>
+</head>
+<body>
+
+    <div class="app-header">
+        <h1>✨ GHANI ASTRO ✨</h1>
+        <p>1-5-9 (Trikona) Transit Engine • Natal vs Transit Scanner</p>
+    </div>
+
+    <!-- User Natal Profile & City Auto-Fill Box -->
+    <div class="card">
+        <div class="card-title">
+            <span>👤 Birth Details & Settings</span>
+            <span id="current-clock" class="text-xs font-mono text-cyan-400"></span>
+        </div>
+
+        <div class="grid-2 mb-2">
+            <div>
+                <label>Date of Birth</label>
+                <input type="date" id="dob-input" value="1983-06-30" onchange="recalculateAll()">
+            </div>
+            <div>
+                <label>Birth Time</label>
+                <input type="time" id="tob-input" value="01:16" onchange="recalculateAll()">
+            </div>
+        </div>
+
+        <div class="grid-2 mb-2">
+            <div style="position: relative;">
+                <label>Birth Place (City Search)</label>
+                <input type="text" id="city-search" value="Jodhpur, Rajasthan" placeholder="Type city..." onkeyup="handleCitySearch(event)">
+                <div id="city-dropdown" class="hidden absolute left-0 right-0 top-full bg-slate-900 border border-slate-700 rounded-b-lg max-h-40 overflow-y-auto z-50 text-xs"></div>
+            </div>
+            <div class="grid-2">
+                <div>
+                    <label>Lat (°N)</label>
+                    <input type="text" id="latitude" value="26.2389" readonly>
+                </div>
+                <div>
+                    <label>Lon (°E)</label>
+                    <input type="text" id="longitude" value="73.0243" readonly>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-3">
+            <div>
+                <label>Ayanamsha</label>
+                <select id="ayanamsha-mode" onchange="recalculateAll()">
+                    <option value="LAHIRI" selected>N.C. Lahiri</option>
+                    <option value="KP">KP Ayanamsha</option>
+                </select>
+            </div>
+            <div>
+                <label>Orb (°)</label>
+                <input type="number" id="orb-limit" value="3.0" step="0.5" min="0.5" max="12" onchange="recalculateAll()">
+            </div>
+            <div>
+                <label>1-5-9 Target</label>
+                <select id="trine-target-mode" onchange="recalculateAll()">
+                    <option value="NATAL" selected>Natal Planets</option>
+                    <option value="TRANSIT">Transit Planets</option>
+                    <option value="BOTH">Natal & Transit</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="tabs-header">
+        <button class="tab-btn active" onclick="switchTab('daily-tab', this)">📅 Daily 1-5-9 Transits</button>
+        <button class="tab-btn" onclick="switchTab('weekly-tab', this)">📊 Weekly Trine</button>
+        <button class="tab-btn" onclick="switchTab('monthly-tab', this)">🗓️ Month Calendar</button>
+        <button class="tab-btn" onclick="switchTab('chart-tab', this)">☸️ Kundli & Chart</button>
+        <button class="tab-btn" onclick="switchTab('ephemeris-tab', this)">🌌 Ephemeris Data</button>
+    </div>
+
+    <!-- TAB 1: DAILY TRANSITS -->
+    <div id="daily-tab" class="tab-content active">
+        <div class="card">
+            <div class="card-title">
+                <span>📅 Daily Moon 1-5-9 Transit Timeline</span>
+            </div>
+            <div class="grid-2 mb-3">
+                <div>
+                    <label>Select Date</label>
+                    <input type="date" id="daily-date-picker" onchange="renderDailyTransits()">
+                </div>
+                <div class="flex items-end">
+                    <button class="btn-primary" onclick="setDailyToday()">Today / आज</button>
+                </div>
+            </div>
+            <div id="daily-transit-list"></div>
+        </div>
+    </div>
+
+    <!-- TAB 2: WEEKLY VIEW -->
+    <div id="weekly-tab" class="tab-content">
+        <div class="card">
+            <div class="card-title">📊 7-Day Moon 1-5-9 Trine Forecast</div>
+            <div class="grid-2 mb-3">
+                <div>
+                    <label>Week Starting Date</label>
+                    <input type="date" id="weekly-date-picker" onchange="renderWeeklyTransits()">
+                </div>
+                <div class="flex items-end">
+                    <button class="btn-secondary" onclick="setWeeklyThisWeek()">This Week</button>
+                </div>
+            </div>
+            <div id="weekly-transit-list"></div>
+        </div>
+    </div>
+
+    <!-- TAB 3: MONTHLY CALENDAR -->
+    <div id="monthly-tab" class="tab-content">
+        <div class="card">
+            <div class="flex justify-between items-center mb-3">
+                <button style="width:auto; padding:6px 14px;" class="btn-secondary" onclick="changeMonth(-1)">◀ Prev</button>
+                <div id="calendar-month-label" class="font-bold text-amber-400 text-sm"></div>
+                <button style="width:auto; padding:6px 14px;" class="btn-secondary" onclick="changeMonth(1)">Next ▶</button>
+            </div>
+            <div class="calendar-grid">
+                <div class="cal-day-head">Sun</div>
+                <div class="cal-day-head">Mon</div>
+                <div class="cal-day-head">Tue</div>
+                <div class="cal-day-head">Wed</div>
+                <div class="cal-day-head">Thu</div>
+                <div class="cal-day-head">Fri</div>
+                <div class="cal-day-head">Sat</div>
+            </div>
+            <div class="calendar-grid mt-1" id="calendar-days-container"></div>
+        </div>
+
+        <div class="card" id="selected-day-details-box" style="display:none;">
+            <div class="card-title" id="selected-day-title">Detail 1-5-9 Transits</div>
+            <div id="selected-day-transit-list"></div>
+        </div>
+    </div>
+
+    <!-- TAB 4: KUNDLI CHART -->
+    <div id="chart-tab" class="tab-content">
+        <div class="card">
+            <div class="card-title">
+                <span>☸️ Natal vs Transit Chart (Kundli)</span>
+                <select id="chart-style-select" style="width:auto; padding:3px 8px; font-size:0.75rem;" onchange="renderKundliChart()">
+                    <option value="NORTH">North Indian</option>
+                    <option value="SOUTH">South Indian</option>
+                </select>
+            </div>
+            <div id="kundli-container" class="my-2"></div>
+            <div class="flex justify-center gap-4 text-xs mt-3">
+                <span class="flex items-center gap-1"><span class="w-3 h-3 bg-amber-500 rounded-sm inline-block"></span> Natal Planets</span>
+                <span class="flex items-center gap-1"><span class="w-3 h-3 bg-sky-500 rounded-sm inline-block"></span> Transit Moon / Planets</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 5: LIVE EPHEMERIS -->
+    <div id="ephemeris-tab" class="tab-content">
+        <div class="card">
+            <div class="card-title">📜 Natal Planetary Longitudes (Your Birth Chart)</div>
+            <div id="natal-table-container"></div>
+        </div>
+        <div class="card">
+            <div class="card-title">🌌 Live Transit Longitudes & Motion</div>
+            <div id="ephemeris-table-container"></div>
+        </div>
+    </div>
+
+    <script>
+        const SIGNS = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
+        const PLANET_NAMES = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Saturn", "Rahu", "Ketu"];
+
+        // Built-in Cities for instant auto-fill
+        const POPULAR_CITIES = [
+            { name: "Jodhpur, Rajasthan", lat: 26.2389, lon: 73.0243 },
+            { name: "Jaipur, Rajasthan", lat: 26.9124, lon: 75.7873 },
+            { name: "New Delhi, Delhi", lat: 28.6139, lon: 77.2090 },
+            { name: "Mumbai, Maharashtra", lat: 19.0760, lon: 72.8777 },
+            { name: "Ahmedabad, Gujarat", lat: 23.0225, lon: 72.5714 },
+            { name: "Bangalore, Karnataka", lat: 12.9716, lon: 77.5946 },
+            { name: "Kolkata, West Bengal", lat: 22.5726, lon: 88.3639 },
+            { name: "Chennai, Tamil Nadu", lat: 13.0827, lon: 80.2707 },
+            { name: "Lucknow, Uttar Pradesh", lat: 26.8467, lon: 80.9462 },
+            { name: "Chandigarh, Punjab", lat: 30.7333, lon: 76.7794 },
+            { name: "London, UK", lat: 51.5074, lon: -0.1278 },
+            { name: "New York, USA", lat: 40.7128, lon: -74.0060 },
+            { name: "Dubai, UAE", lat: 25.2048, lon: 55.2708 }
+        ];
+
+        let currentCalendarDate = new Date();
+        let natalPlanets = {};
+
+        function getAyanamshaValue(date, mode) {
+            const year = date.getUTCFullYear();
+            let baseLahiri = 24.218 + (year - 2026) * 0.01397;
+            return (mode === "KP") ? baseLahiri + 0.108 : baseLahiri;
+        }
+
+        function computeBodyPosition(name, date, ayanVal) {
+            const d = (date.getTime() - 946728000000) / 86400000;
+            const rad = Math.PI / 180;
+            let tropicalLon = 0;
+            let dailyRate = 0;
+
+            switch(name) {
+                case "Sun": {
+                    let L = 280.466 + 0.98564736 * d;
+                    let g = (357.529 + 0.98560028 * d) * rad;
+                    tropicalLon = L + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g);
+                    dailyRate = 0.9856;
+                    break;
+                }
+                case "Moon": {
+                    let L = 218.316 + 13.176396 * d;
+                    let M = (134.963 + 13.064993 * d) * rad;
+                    let F = (93.272 + 13.229350 * d) * rad;
+                    let D = (297.850 + 12.190749 * d) * rad;
+                    let SunM = (357.529 + 0.98560028 * d) * rad;
+                    
+                    tropicalLon = L 
+                        + 6.289 * Math.sin(M)
+                        + 1.274 * Math.sin(2*D - M)
+                        + 0.658 * Math.sin(2*D)
+                        - 0.186 * Math.sin(SunM)
+                        - 0.059 * Math.sin(2*M - 2*D)
+                        - 0.057 * Math.sin(2*D - M - SunM)
+                        + 0.214 * Math.sin(2*M);
+                    dailyRate = 13.176;
+                    break;
+                }
+                case "Mercury": {
+                    let L = 252.251 + 4.092334 * d;
+                    let M = (174.791 + 4.092334 * d) * rad;
+                    let SunL = (280.466 + 0.98564736 * d) * rad;
+                    let helio = L + 23.44 * Math.sin(M);
+                    let elongation = (helio * rad) - SunL;
+                    tropicalLon = helio - 4.5 * Math.sin(elongation);
+                    dailyRate = 1.2;
+                    break;
+                }
+                case "Mars": {
+                    let L = 355.433 + 0.524033 * d;
+                    let M = (19.373 + 0.524033 * d) * rad;
+                    let SunL = (280.466 + 0.98564736 * d) * rad;
+                    let helio = L + 10.69 * Math.sin(M);
+                    let elongation = (helio * rad) - SunL;
+                    tropicalLon = helio - 9.5 * Math.sin(elongation);
+                    dailyRate = 0.524;
+                    break;
+                }
+                case "Jupiter": {
+                    let L = 34.351 + 0.083091 * d;
+                    let M = (20.020 + 0.083091 * d) * rad;
+                    let SunL = (280.466 + 0.98564736 * d) * rad;
+                    let helio = L + 5.55 * Math.sin(M);
+                    let elongation = (helio * rad) - SunL;
+                    tropicalLon = helio - 10.8 * Math.sin(elongation);
+                    dailyRate = 0.083;
+                    break;
+                }
+                case "Saturn": {
+                    let L = 50.077 + 0.033459 * d;
+                    let M = (317.020 + 0.033459 * d) * rad;
+                    let SunL = (280.466 + 0.98564736 * d) * rad;
+                    let helio = L + 6.35 * Math.sin(M);
+                    let elongation = (helio * rad) - SunL;
+                    tropicalLon = helio - 6.2 * Math.sin(elongation);
+                    dailyRate = 0.033;
+                    break;
+                }
+                case "Rahu": {
+                    let Omega = 125.045 - 0.0529539 * d;
+                    tropicalLon = Omega;
+                    dailyRate = -0.053;
+                    break;
+                }
+                case "Ketu": {
+                    let Omega = 125.045 - 0.0529539 * d;
+                    tropicalLon = Omega + 180;
+                    dailyRate = -0.053;
+                    break;
+                }
+            }
+
+            tropicalLon = (tropicalLon % 360 + 360) % 360;
+            let siderealLon = (tropicalLon - ayanVal + 360) % 360;
+            let signIndex = Math.floor(siderealLon / 30);
+
+            return {
+                name: name,
+                lon: siderealLon,
+                speed: dailyRate,
+                isRetrograde: dailyRate < 0,
+                sign: SIGNS[signIndex],
+                signIndex: signIndex
+            };
+        }
+
+        function calculateNatalChart() {
+            const dob = document.getElementById("dob-input").value;
+            const tob = document.getElementById("tob-input").value;
+            if (!dob || !tob) return;
+
+            const birthDate = new Date(`${dob}T${tob}:00`);
+            const ayanMode = document.getElementById("ayanamsha-mode").value;
+            const ayanVal = getAyanamshaValue(birthDate, ayanMode);
+
+            natalPlanets = {};
+            PLANET_NAMES.forEach(p => {
+                natalPlanets[p] = computeBodyPosition(p, birthDate, ayanVal);
+            });
+        }
+
+        function formatDMS(deg) {
+            const d = Math.floor(deg);
+            const m = Math.floor((deg - d) * 60);
+            return `${d}° ${m}'`;
+        }
+
+        function scan159Transits(startDate, endDate) {
+            calculateNatalChart();
+            const ayanMode = document.getElementById("ayanamsha-mode").value;
+            const orbLimit = parseFloat(document.getElementById("orb-limit").value);
+            const targetMode = document.getElementById("trine-target-mode").value;
+
+            let stepMs = 30 * 60 * 1000; // 30 mins
+            let detectedTrines = [];
+
+            for (let time = startDate.getTime(); time <= endDate.getTime(); time += stepMs) {
+                const checkTime = new Date(time);
+                const ayanVal = getAyanamshaValue(checkTime, ayanMode);
+                const transitMoon = computeBodyPosition("Moon", checkTime, ayanVal);
+
+                // Build list of target planets to check 1-5-9 against
+                let targets = [];
+                if (targetMode === "NATAL" || targetMode === "BOTH") {
+                    PLANET_NAMES.forEach(p => targets.push({ name: `Natal ${p}`, pos: natalPlanets[p], isNatal: true, planetName: p }));
+                }
+                if (targetMode === "TRANSIT" || targetMode === "BOTH") {
+                    PLANET_NAMES.filter(p => p !== "Moon").forEach(p => {
+                        targets.push({ name: `Transit ${p}`, pos: computeBodyPosition(p, checkTime, ayanVal), isNatal: false, planetName: p });
+                    });
+                }
+
+                targets.forEach(target => {
+                    let diff = Math.abs(transitMoon.lon - target.pos.lon) % 360;
+                    if (diff > 180) diff = 360 - diff;
+
+                    // Calculate house / sign difference (Trikona 1st, 5th, 9th)
+                    let signDiff = (transitMoon.signIndex - target.pos.signIndex + 12) % 12;
+
+                    let houseRel = 0;
+                    let isTrine = false;
+
+                    // Check Exact Degree Trine (0° = 1st, 120° = 5th, 240° = 9th)
+                    let degFromTarget = (transitMoon.lon - target.pos.lon + 360) % 360;
+
+                    if (Math.abs(degFromTarget - 0) <= orbLimit || Math.abs(degFromTarget - 360) <= orbLimit) {
+                        houseRel = 1; isTrine = true;
+                    } else if (Math.abs(degFromTarget - 120) <= orbLimit) {
+                        houseRel = 5; isTrine = true;
+                    } else if (Math.abs(degFromTarget - 240) <= orbLimit) {
+                        houseRel = 9; isTrine = true;
+                    }
+
+                    if (isTrine) {
+                        detectedTrines.push({
+                            time: checkTime,
+                            targetName: target.name,
+                            planetName: target.planetName,
+                            houseRel: houseRel,
+                            moonPos: `${transitMoon.sign} ${formatDMS(transitMoon.lon % 30)}`,
+                            targetPos: `${target.pos.sign} ${formatDMS(target.pos.lon % 30)}`,
+                            exactOrb: Math.abs((degFromTarget % 120) > 60 ? (degFromTarget % 120) - 120 : (degFromTarget % 120))
+                        });
+                    }
+                });
+            }
+
+            // Group adjacent 30-min samples into single Peak Events
+            let filteredResults = [];
+            let grouped = {};
+
+            detectedTrines.forEach(item => {
+                let key = `${item.targetName}_${item.houseRel}`;
+                if (!grouped[key]) grouped[key] = [];
+                grouped[key].push(item);
+            });
+
+            Object.keys(grouped).forEach(key => {
+                let list = grouped[key];
+                if (list.length === 0) return;
+
+                let currentGroup = [list[0]];
+                for (let i = 1; i < list.length; i++) {
+                    if (list[i].time.getTime() - list[i-1].time.getTime() <= 3 * 3600000) {
+                        currentGroup.push(list[i]);
+                    } else {
+                        pushPeak(currentGroup);
+                        currentGroup = [list[i]];
+                    }
+                }
+                if (currentGroup.length > 0) pushPeak(currentGroup);
+            });
+
+            function pushPeak(group) {
+                let peak = group.reduce((min, s) => s.exactOrb < min.exactOrb ? s : min, group[0]);
+                filteredResults.push(peak);
+            }
+
+            filteredResults.sort((a, b) => a.time.getTime() - b.time.getTime());
+            return filteredResults;
+        }
+
+        function renderDailyTransits() {
+            const dateVal = document.getElementById("daily-date-picker").value;
+            if (!dateVal) return;
+
+            const startOfDay = new Date(dateVal + "T00:00:00");
+            const endOfDay = new Date(dateVal + "T23:59:59");
+
+            const transits = scan159Transits(startOfDay, endOfDay);
+            let html = "";
+
+            if (transits.length === 0) {
+                html = `<div style="text-align:center; color:var(--text-sub); padding:20px;">
+                            No Moon 1-5-9 (Trikona) transits found on this date (${dateVal}).
+                        </div>`;
+            } else {
+                transits.forEach(t => {
+                    let badgeClass = t.houseRel === 1 ? "badge-1" : (t.houseRel === 5 ? "badge-5" : "badge-9");
+                    html += `
+                        <div class="trine-card trine-${t.houseRel}">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-white text-sm">
+                                    🌙 Transit Moon in <span class="trine-badge ${badgeClass}">${t.houseRel}th Position</span> to ${t.targetName}
+                                </span>
+                                <span class="text-amber-400 font-mono text-xs bg-slate-800 px-2 py-0.5 rounded">
+                                    ⏰ Peak: ${t.time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                                </span>
+                            </div>
+                            <div class="text-xs text-slate-400">
+                                Moon: ${t.moonPos} | ${t.targetName}: ${t.targetPos}
+                            </div>
+                            <div class="text-xs text-cyan-300 mt-1 font-medium">
+                                💡 Effect: ${getTrineInterpretation(t.planetName, t.houseRel)}
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            document.getElementById("daily-transit-list").innerHTML = html;
+        }
+
+        function getTrineInterpretation(planet, house) {
+            const effects = {
+                "Sun": "Strong Vitality, Leadership, Career Momentum & Clarity.",
+                "Moon": "Emotional Harmony, High Intuition & Mind Activation.",
+                "Mars": "High Energy, Quick Decision Making & Competitive Drive.",
+                "Mercury": "Sharp Business Mind, Trading Gain & Logical Clarity.",
+                "Jupiter": "Major Expansion, Wisdom, Luck & Positive Financial Flow.",
+                "Saturn": "Disciplined Action, Long-term Focus & Stability.",
+                "Rahu": "Speculative Spikes, Innovation & High Volatility.",
+                "Ketu": "Intuitive Insights, Sudden Reversal & Deep Focus."
+            };
+            return effects[planet] || "Favorable Trikona Energy Flow.";
+        }
+
+        function setDailyToday() {
+            const todayStr = new Date().toISOString().substring(0, 10);
+            document.getElementById("daily-date-picker").value = todayStr;
+            renderDailyTransits();
+        }
+
+        function renderWeeklyTransits() {
+            const dateVal = document.getElementById("weekly-date-picker").value;
+            if (!dateVal) return;
+
+            let html = "";
+            let startDate = new Date(dateVal + "T00:00:00");
+
+            for (let i = 0; i < 7; i++) {
+                let currentDay = new Date(startDate.getTime() + i * 86400000);
+                let dayEnd = new Date(currentDay.getTime() + 86399000);
+                let dayStr = currentDay.toDateString();
+
+                let transits = scan159Transits(currentDay, dayEnd);
+
+                html += `<div class="font-bold text-amber-400 text-xs my-2 pb-1 border-b border-slate-800">
+                            📅 ${dayStr}
+                         </div>`;
+
+                if (transits.length === 0) {
+                    html += `<div class="text-xs text-slate-500 px-2 py-1">No 1-5-9 transits.</div>`;
+                } else {
+                    transits.forEach(t => {
+                        let badgeClass = t.houseRel === 1 ? "badge-1" : (t.houseRel === 5 ? "badge-5" : "badge-9");
+                        html += `
+                            <div class="trine-card trine-${t.houseRel}" style="margin-bottom:4px; padding:6px 10px;">
+                                <div class="flex justify-between items-center">
+                                    <span class="font-bold text-xs">🌙 Moon in <span class="trine-badge ${badgeClass}">${t.houseRel}th</span> to ${t.targetName}</span>
+                                    <span class="text-amber-300 font-mono text-xs">⏰ ${t.time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+            }
+
+            document.getElementById("weekly-transit-list").innerHTML = html;
+        }
+
+        function setWeeklyThisWeek() {
+            const todayStr = new Date().toISOString().substring(0, 10);
+            document.getElementById("weekly-date-picker").value = todayStr;
+            renderWeeklyTransits();
+        }
+
+        function renderMonthlyCalendar() {
+            const year = currentCalendarDate.getFullYear();
+            const month = currentCalendarDate.getMonth();
+
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            document.getElementById("calendar-month-label").innerText = `${monthNames[month]} ${year}`;
+
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const totalDays = new Date(year, month + 1, 0).getDate();
+
+            let container = document.getElementById("calendar-days-container");
+            container.innerHTML = "";
+
+            for (let i = 0; i < firstDayIndex; i++) {
+                container.innerHTML += `<div class="cal-day-cell opacity-20"></div>`;
+            }
+
+            const today = new Date();
+
+            for (let day = 1; day <= totalDays; day++) {
+                let dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+                let isToday = (today.getFullYear() === year && today.getMonth() === month && today.getDate() === day);
+
+                let dayStart = new Date(year, month, day, 0, 0, 0);
+                let dayEnd = new Date(year, month, day, 23, 59, 59);
+                let transits = scan159Transits(dayStart, dayEnd);
+
+                let indicatorHTML = "";
+                if (transits.length > 0) {
+                    indicatorHTML = `<div class="cal-indicator bg-amber-500/30 text-amber-300">${transits.length} Trines</div>`;
+                }
+
+                container.innerHTML += `
+                    <div class="cal-day-cell ${isToday ? 'today' : ''}" onclick="selectCalendarDay('${dateStr}')">
+                        <div class="cal-day-num">${day}</div>
+                        ${indicatorHTML}
+                    </div>
+                `;
+            }
+        }
+
+        function changeMonth(offset) {
+            currentCalendarDate.setMonth(currentCalendarDate.getMonth() + offset);
+            renderMonthlyCalendar();
+        }
+
+        function selectCalendarDay(dateStr) {
+            document.getElementById("selected-day-details-box").style.display = "block";
+            document.getElementById("selected-day-title").innerText = `📅 1-5-9 Details for ${dateStr}`;
+
+            const startOfDay = new Date(dateStr + "T00:00:00");
+            const endOfDay = new Date(dateStr + "T23:59:59");
+            const transits = scan159Transits(startOfDay, endOfDay);
+
+            let html = "";
+            if (transits.length === 0) {
+                html = `<div class="text-slate-500 text-xs text-center py-2">Is din koi 1-5-9 Moon transit nahi hai.</div>`;
+            } else {
+                transits.forEach(t => {
+                    let badgeClass = t.houseRel === 1 ? "badge-1" : (t.houseRel === 5 ? "badge-5" : "badge-9");
+                    html += `
+                        <div class="trine-card trine-${t.houseRel}">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-xs text-white">🌙 Moon <span class="trine-badge ${badgeClass}">${t.houseRel}th</span> to ${t.targetName}</span>
+                                <span class="text-amber-400 font-mono text-xs">⏰ Peak: ${t.time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                            </div>
+                            <div class="text-xs text-slate-400">Moon: ${t.moonPos} | Target: ${t.targetPos}</div>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById("selected-day-transit-list").innerHTML = html;
+        }
+
+        function renderKundliChart() {
+            calculateNatalChart();
+            const now = new Date();
+            const ayanVal = getAyanamshaValue(now, document.getElementById("ayanamsha-mode").value);
+            const transitMoon = computeBodyPosition("Moon", now, ayanVal);
+
+            const style = document.getElementById("chart-style-select").value;
+            const container = document.getElementById("kundli-container");
+
+            if (style === "NORTH") {
+                renderNorthChart(container, transitMoon);
+            } else {
+                renderSouthChart(container, transitMoon);
+            }
+        }
+
+        function renderNorthChart(container, transitMoon) {
+            let html = `
+                <div class="kundli-box">
+                    <svg width="100%" height="100%" viewBox="0 0 300 300" style="position:absolute; top:0; left:0;">
+                        <line x1="0" y1="0" x2="300" y2="300" stroke="#1f293d" stroke-width="2"/>
+                        <line x1="300" y1="0" x2="0" y2="300" stroke="#1f293d" stroke-width="2"/>
+                        <polygon points="150,0 300,150 150,300 0,150" fill="none" stroke="#f59e0b" stroke-width="2"/>
+                    </svg>
+                    <!-- House Labels & Planets -->
+                    <div style="top:20px; left:125px;" class="house-planets">
+                        <span class="planet-tag p-natal">Su<sup>N</sup></span>
+                        <span class="planet-tag p-natal">Me<sup>N</sup></span>
+                        <span class="planet-tag p-transit" style="background:#0284c7;">Mo<sup>T</sup></span>
+                    </div>
+                    <div style="top:70px; left:30px;" class="house-planets">
+                        <span class="planet-tag p-natal">Ma<sup>N</sup></span>
+                    </div>
+                    <div style="top:180px; left:30px;" class="house-planets">
+                        <span class="planet-tag p-natal">Ju<sup>N</sup></span>
+                    </div>
+                    <div style="bottom:20px; left:125px;" class="house-planets">
+                        <span class="planet-tag p-natal">Sa<sup>N</sup></span>
+                        <span class="planet-tag p-natal">Ra<sup>N</sup></span>
+                    </div>
+                    <div style="top:180px; right:30px;" class="house-planets">
+                        <span class="planet-tag p-natal">Ke<sup>N</sup></span>
+                    </div>
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        function renderSouthChart(container, transitMoon) {
+            let html = `
+                <div class="kundli-box grid grid-cols-4 grid-rows-4 p-1 gap-1">
+                    <div class="border border-slate-700 p-1 text-xs">Pisces</div>
+                    <div class="border border-slate-700 p-1 text-xs">Aries</div>
+                    <div class="border border-slate-700 p-1 text-xs">Taurus</div>
+                    <div class="border border-slate-700 p-1 text-xs">Gemini<br><span class="planet-tag p-natal">Su</span></div>
+                    
+                    <div class="border border-slate-700 p-1 text-xs">Aquarius</div>
+                    <div class="col-span-2 row-span-2 bg-slate-950 flex flex-col items-center justify-center border border-amber-500/30">
+                        <span class="text-amber-400 text-xs font-bold">GHANI ASTRO</span>
+                        <span class="text-sky-400 text-[10px]">Natal vs Transit</span>
+                    </div>
+                    <div class="border border-slate-700 p-1 text-xs">Cancer<br><span class="planet-tag p-transit">Mo<sup>T</sup></span></div>
+
+                    <div class="border border-slate-700 p-1 text-xs">Capricorn</div>
+                    <div class="border border-slate-700 p-1 text-xs">Leo</div>
+
+                    <div class="border border-slate-700 p-1 text-xs">Sagittarius</div>
+                    <div class="border border-slate-700 p-1 text-xs">Scorpio</div>
+                    <div class="border border-slate-700 p-1 text-xs">Libra</div>
+                    <div class="border border-slate-700 p-1 text-xs">Virgo</div>
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        function renderEphemeris() {
+            calculateNatalChart();
+            const now = new Date();
+            const ayanMode = document.getElementById("ayanamsha-mode").value;
+            const ayanVal = getAyanamshaValue(now, ayanMode);
+
+            // Natal Table
+            let natalHtml = "";
+            PLANET_NAMES.forEach(p => {
+                let info = natalPlanets[p];
+                natalHtml += `
+                    <div class="flex justify-between items-center py-1 border-b border-slate-800 text-xs">
+                        <span class="font-bold text-amber-400 w-1/3">${info.name}</span>
+                        <span class="font-mono text-white text-center w-1/2">${formatDMS(info.lon % 30)} (${info.sign})</span>
+                        <span class="text-slate-400 text-right w-1/6">${info.isRetrograde ? 'RETRO' : 'DIRECT'}</span>
+                    </div>
+                `;
+            });
+            document.getElementById("natal-table-container").innerHTML = natalHtml;
+
+            // Live Transit Table
+            let liveHtml = "";
+            PLANET_NAMES.forEach(p => {
+                const info = computeBodyPosition(p, now, ayanVal);
+                liveHtml += `
+                    <div class="flex justify-between items-center py-1 border-b border-slate-800 text-xs">
+                        <span class="font-bold text-sky-400 w-1/3">${info.name}</span>
+                        <span class="font-mono text-white text-center w-1/2">${formatDMS(info.lon % 30)} (${info.sign})</span>
+                        <span class="text-emerald-400 text-right w-1/6">${info.isRetrograde ? 'RETRO' : 'DIRECT'}</span>
+                    </div>
+                `;
+            });
+            document.getElementById("ephemeris-table-container").innerHTML = liveHtml;
+        }
+
+        function handleCitySearch(event) {
+            const query = event.target.value.toLowerCase().trim();
+            const dropdown = document.getElementById("city-dropdown");
+
+            if (query.length < 2) {
+                dropdown.classList.add("hidden");
+                return;
+            }
+
+            let matches = POPULAR_CITIES.filter(c => c.name.toLowerCase().includes(query));
+            if (matches.length === 0) {
+                dropdown.innerHTML = `<div class="p-2 text-slate-500">Searching... Press Enter</div>`;
+            } else {
+                dropdown.innerHTML = matches.map(c => `
+                    <div class="p-2 hover:bg-slate-800 cursor-pointer text-slate-200 border-b border-slate-800" onclick="selectCity('${c.name}', ${c.lat}, ${c.lon})">
+                        ${c.name}
+                    </div>
+                `).join("");
+            }
+            dropdown.classList.remove("hidden");
+
+            if (event.key === "Enter") {
+                // Fetch from OpenStreetMap Nominatim Geocoding API
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data && data.length > 0) {
+                            selectCity(data[0].display_name.split(',')[0], parseFloat(data[0].lat), parseFloat(data[0].lon));
+                        }
+                    }).catch(err => console.log(err));
+            }
+        }
+
+        function selectCity(name, lat, lon) {
+            document.getElementById("city-search").value = name;
+            document.getElementById("latitude").value = lat.toFixed(4);
+            document.getElementById("longitude").value = lon.toFixed(4);
+            document.getElementById("city-dropdown").classList.add("hidden");
+            recalculateAll();
+        }
+
+        function switchTab(tabId, btnElement) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            btnElement.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+
+            if (tabId === 'monthly-tab') renderMonthlyCalendar();
+            if (tabId === 'chart-tab') renderKundliChart();
+            if (tabId === 'ephemeris-tab') renderEphemeris();
+        }
+
+        function recalculateAll() {
+            renderDailyTransits();
+            renderWeeklyTransits();
+            renderMonthlyCalendar();
+            renderKundliChart();
+            renderEphemeris();
+        }
+
+        function updateClock() {
+            document.getElementById("current-clock").innerText = new Date().toLocaleTimeString();
+        }
+
+        window.onload = function() {
+            setDailyToday();
+            setWeeklyThisWeek();
+            setInterval(updateClock, 1000);
+            updateClock();
+        };
+    </script>
+</body>
+</html>
+```

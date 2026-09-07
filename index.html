@@ -112,6 +112,12 @@
             gap: 10px;
         }
 
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 8px;
+        }
+
         label {
             font-size: 11px;
             color: var(--text-sub);
@@ -155,6 +161,22 @@
         .btn-action:hover {
             opacity: 0.95;
             transform: translateY(-1px);
+        }
+
+        .btn-small {
+            background: var(--bg-card);
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
+            padding: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .btn-small:hover {
+            background: rgba(255,215,0,0.15);
         }
 
         .tabs-wrapper {
@@ -322,6 +344,14 @@
 
         .cal-num { font-weight: 700; }
         .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-green); display: inline-block; margin-top: 3px; }
+        
+        .hit-box {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-left: 3px solid var(--accent-gold);
+        }
     </style>
 </head>
 <body>
@@ -365,6 +395,10 @@
                     </div>
                 </div>
                 <div>
+                    <label>ऑर्ब सीमा (Orb Limit Deg)</label>
+                    <input type="number" id="orb" value="3.0" step="0.5">
+                </div>
+                <div>
                     <label>अयनांश (Ayanamsha System)</label>
                     <select id="ayanamsha">
                         <option value="LAHIRI" selected>N.C. Lahiri Ayanamsha (Chitra Paksha)</option>
@@ -372,16 +406,12 @@
                         <option value="RAMAN">B.V. Raman Ayanamsha</option>
                     </select>
                 </div>
-                <div>
-                    <label>ऑर्ब सीमा (Orb Limit Deg)</label>
-                    <input type="number" id="orb" value="3.0" step="0.5">
-                </div>
             </div>
             <button class="btn-action" onclick="recalculateAll(); toggleProfile();">अपडेट एवं री-कैलकुलेट करें (Run Engine)</button>
         </div>
     </div>
 
-    <!-- Separate Grid Navigation Tabs -->
+    <!-- Navigation Tabs -->
     <div class="tabs-wrapper">
         <div class="tabs-container">
             <button class="tab-btn active" onclick="switchTab('tab1', this)">🗓️ 1-5-9 गोचर</button>
@@ -401,19 +431,27 @@
                 Swiss Ephemeris एल्गोरिदम द्वारा संचालित: जब गोचर चंद्रमा आपके जन्म या गोचर के ग्रहों से 1, 5, या 9वें घर (0°, 120°, 240°) में आता है:
             </p>
             
-            <div class="grid-2">
+            <div class="grid-3">
                 <div>
-                    <label>तारीख चुनें (Scan Date)</label>
-                    <input type="date" id="scanDate" onchange="renderTab1()">
+                    <label>गोचर तारीख (Transit Date)</label>
+                    <input type="date" id="scanDate" onchange="recalculateAll()">
                 </div>
                 <div>
-                    <label>दृश्य चुनें (View Mode)</label>
-                    <select id="transitViewMode" onchange="renderTab1()">
-                        <option value="daily">डेली टाइमलाइन (Daily Timeline)</option>
-                        <option value="weekly">साप्ताहिक पूर्वानुमान (Weekly 7-Day)</option>
-                        <option value="monthly">मासिक कैलेंडर (Monthly Grid)</option>
-                    </select>
+                    <label>गोचर समय (Transit Time)</label>
+                    <input type="time" id="scanTime" onchange="recalculateAll()">
                 </div>
+                <div style="display:flex; align-items:flex-end;">
+                    <button class="btn-small" onclick="setCurrentTransitTime();">📍 अभी (Now)</button>
+                </div>
+            </div>
+
+            <div style="margin-top:10px;">
+                <label>दृश्य चुनें (View Mode)</label>
+                <select id="transitViewMode" onchange="renderTab1()">
+                    <option value="daily">डेली टाइमलाइन (Daily Timeline)</option>
+                    <option value="weekly">साप्ताहिक पूर्वानुमान (Weekly 7-Day)</option>
+                    <option value="monthly">मासिक कैलेंडर (Monthly Grid)</option>
+                </select>
             </div>
 
             <div id="tab1-results" style="margin-top:12px;"></div>
@@ -456,7 +494,7 @@
                 <table id="planetsTable">
                     <thead>
                         <tr>
-                            <th>ग्रह</th>
+                            <th>ग्रह / बिंदु</th>
                             <th>नेटल Deg</th>
                             <th>गोचर Deg</th>
                             <th>राशि</th>
@@ -515,10 +553,10 @@
         </div>
     </div>
 
-    <!-- TAB 6: Vimshottari Dasha Analysis -->
+    <!-- TAB 6: Vimshottari Dasha & Dasha Hits Analysis -->
     <div id="tab6" class="tab-content">
         <div class="card">
-            <div class="card-title">📜 विंशोत्तरी महादशा एवं अंतर्दशा</div>
+            <div class="card-title">📜 विंशोत्तरी महादशा एवं अंतर्दशा (Exact Math)</div>
             <div id="dashaSummary" style="margin-bottom:12px; margin-top:8px;"></div>
             
             <div style="overflow-x:auto;">
@@ -526,15 +564,18 @@
                     <thead>
                         <tr>
                             <th>स्तर</th>
-                            <th>स्वामी</th>
-                            <th>आरंभ</th>
-                            <th>समाप्ति</th>
+                            <th>स्वामी ग्रह</th>
+                            <th>आरंभ तिथि</th>
+                            <th>समाप्ति तिथि</th>
                             <th>स्थिति</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
                 </table>
             </div>
+
+            <div class="card-title" style="margin-top:18px;">🎯 महादशा-अंतर्दशा स्वामी गोचर व नेटल हिट विश्लेषण</div>
+            <div id="dashaHitsAnalysis" style="margin-top:8px;"></div>
         </div>
     </div>
 
@@ -588,6 +629,7 @@
         let transitPlanets = {};
         let natalHouses = [];
         let natalAscendant = 0;
+        let transitAscendant = 0;
 
         function toggleProfile() {
             const content = document.getElementById('profileContent');
@@ -599,6 +641,17 @@
                 content.classList.add('collapsed');
                 text.innerText = 'दिखाएं ▼';
             }
+        }
+
+        function setCurrentTransitTime() {
+            const now = new Date();
+            const dateStr = now.toISOString().split('T')[0];
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            
+            document.getElementById('scanDate').value = dateStr;
+            document.getElementById('scanTime').value = `${hours}:${minutes}`;
+            recalculateAll();
         }
 
         function handleCitySearch() {
@@ -635,12 +688,11 @@
 
         function getAyanamshaDeg(jd, ayanamshaType) {
             const T = (jd - 2451545.0) / 36525.0;
-            // High-precision Swiss Ephemeris / Lahiri Ayanamsha (Chitra Paksha) at J2000 = 23.853056 deg
             let lahiri = 23.853056 + (1.396042 * T) + (0.000308 * T * T);
             if (ayanamshaType === 'KP') {
-                return lahiri - 0.106; // KP offset
+                return lahiri - 0.106;
             } else if (ayanamshaType === 'RAMAN') {
-                return lahiri - 1.38; // B.V. Raman offset
+                return lahiri - 1.38;
             }
             return lahiri;
         }
@@ -653,13 +705,13 @@
             const d2r = Math.PI / 180.0;
             const r2d = 180.0 / Math.PI;
 
-            // Earth / Sun Trigonometric Moshier Engine
+            // Earth / Sun Trigonometric Engine
             const L0 = 280.46646 + 36000.76983 * T;
             const M_sun = 357.52911 + 35999.05029 * T;
             const C_sun = (1.914602 - 0.004817 * T) * Math.sin(M_sun * d2r) + (0.019993 - 0.000101 * T) * Math.sin(2 * M_sun * d2r);
             const sunTrop = (L0 + C_sun) % 360;
 
-            // Moon High-precision Lunar Terms (Swiss Ephemeris equivalent Moshier Series)
+            // Moon High-precision Lunar Terms
             const L_moon = 218.31645 + 481267.88123 * T;
             const D_moon = 297.85019 + 445267.11140 * T;
             const M_moon = 134.96340 + 477198.86751 * T;
@@ -673,7 +725,6 @@
                          - 0.114332 * Math.sin(2*F_moon * d2r);
             const moonTrop = (L_moon + moonPert) % 360;
 
-            // Planets Keplerian Elements & High precision Perturbations
             const pElements = {
                 Mercury: { a: 0.387098, e: 0.205630, I: 7.0049, N: 48.33167, w: 77.45645, M: 174.7947 + 149472.6741 * T },
                 Venus:   { a: 0.723332, e: 0.006773, I: 3.3947, N: 76.68069, w: 131.53298, M: 50.115 + 58517.8156 * T },
@@ -716,7 +767,7 @@
             planLongs['Rahu'] = (rahuTrop - ayan + 360) % 360;
             planLongs['Ketu'] = (planLongs['Rahu'] + 180) % 360;
 
-            // Lagna (Ascendant) using Local Sidereal Time (LST) - Correct Astronomical Formula
+            // Accurate Lagna Calculation
             const D = jd - 2451545.0;
             const GMST = (280.46061837 + 360.98564736629 * D) % 360;
             const LST = (GMST + parseFloat(lon) + 360) % 360;
@@ -759,11 +810,18 @@
             const lat = document.getElementById('lat').value;
             const lon = document.getElementById('lon').value;
             const ayan = document.getElementById('ayanamsha').value;
+            
             const scanD = document.getElementById('scanDate').value || new Date().toISOString().split('T')[0];
+            let scanT = document.getElementById('scanTime').value;
+            if (!scanT) {
+                const now = new Date();
+                scanT = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                document.getElementById('scanTime').value = scanT;
+            }
             document.getElementById('scanDate').value = scanD;
 
             const birthDateTime = new Date(`${bDate}T${bTime}:00`);
-            const transitDateTime = new Date(`${scanD}T12:00:00`);
+            const transitDateTime = new Date(`${scanD}T${scanT}:00`);
 
             const natalRes = calculateEphemeris(birthDateTime, lat, lon, ayan);
             const transitRes = calculateEphemeris(transitDateTime, lat, lon, ayan);
@@ -776,6 +834,7 @@
             });
 
             natalAscendant = natalRes.ascendant;
+            transitAscendant = transitRes.ascendant;
 
             natalHouses = [];
             for (let i = 0; i < 12; i++) {
@@ -818,12 +877,13 @@
             const container = document.getElementById('tab1-results');
             const viewMode = document.getElementById('transitViewMode').value;
             const scanD = document.getElementById('scanDate').value;
+            const scanT = document.getElementById('scanTime').value || "12:00";
             const lat = document.getElementById('lat').value;
             const lon = document.getElementById('lon').value;
             const ayan = document.getElementById('ayanamsha').value;
             const orbLimit = parseFloat(document.getElementById('orb').value);
 
-            const baseDate = new Date(`${scanD}T00:00:00`);
+            const baseDate = new Date(`${scanD}T${scanT}:00`);
             container.innerHTML = '';
 
             if (viewMode === 'daily') {
@@ -831,7 +891,8 @@
                 let found = false;
 
                 for (let hour = 0; hour < 24; hour += 2) {
-                    const checkTime = new Date(baseDate.getTime() + hour * 3600000);
+                    const checkTime = new Date(`${scanD}T00:00:00`);
+                    checkTime.setHours(hour);
                     const ephem = calculateEphemeris(checkTime, lat, lon, ayan);
                     const tMoonDeg = ephem.planets['Moon'];
 
@@ -888,7 +949,7 @@
             else if (viewMode === 'monthly') {
                 let html = `<h4 style="color:var(--accent-gold); font-size:13px;">🗓️ मासिक कैलेंडर Grid</h4><div class="calendar-grid">`;
                 for (let i = 1; i <= 30; i++) {
-                    const mDate = new Date(baseDate.getFullYear(), baseDate.getMonth(), i);
+                    const mDate = new Date(baseDate.getFullYear(), baseDate.getMonth(), i, 12, 0, 0);
                     const ephem = calculateEphemeris(mDate, lat, lon, ayan);
                     const tMoonDeg = ephem.planets['Moon'];
 
@@ -919,7 +980,8 @@
             let natalHousePlanets = Array.from({ length: 13 }, () => []);
             let transitHousePlanets = Array.from({ length: 13 }, () => []);
 
-            const ascSign = getSignDetails(natalAscendant).signNum;
+            const rootAscendant = (mode === 'transit') ? transitAscendant : natalAscendant;
+            const ascSign = getSignDetails(rootAscendant).signNum;
 
             Object.keys(natalPlanets).forEach(p => {
                 const sNum = getSignDetails(natalPlanets[p].longitude).signNum;
@@ -930,6 +992,9 @@
                 const sNum = getSignDetails(transitPlanets[p].longitude).signNum;
                 transitHousePlanets[sNum].push("Tr." + PLANET_SHORT[p]);
             });
+
+            const trAscSign = getSignDetails(transitAscendant).signNum;
+            transitHousePlanets[trAscSign].push("Tr.Asc");
 
             if (style === 'north') {
                 const getHouseSign = (hNum) => ((ascSign + hNum - 2) % 12) + 1;
@@ -971,7 +1036,7 @@
                         pList = pList.concat(transitHousePlanets[sNum]);
                     }
 
-                    if (hp.h === 1) pList.unshift("Asc");
+                    if (hp.h === 1 && (mode === 'natal' || mode === 'dual')) pList.unshift("Asc");
 
                     svgContent += `<text x="${hp.sx}" y="${hp.sy}" class="chart-sign">${sNum}</text>`;
 
@@ -1010,7 +1075,7 @@
 
                 southSignPos.forEach(sp => {
                     let pList = [];
-                    if (sp.s === ascSign) pList.push("Asc");
+                    if (sp.s === getSignDetails(natalAscendant).signNum && (mode === 'natal' || mode === 'dual')) pList.push("Asc");
 
                     if (mode === 'natal' || mode === 'dual') {
                         pList = pList.concat(natalHousePlanets[sp.s]);
@@ -1041,6 +1106,20 @@
         function renderTab3() {
             const tbodyP = document.querySelector('#planetsTable tbody');
             tbodyP.innerHTML = '';
+
+            const nAscInfo = getSignDetails(natalAscendant);
+            const tAscInfo = getSignDetails(transitAscendant);
+
+            tbodyP.innerHTML += `
+                <tr style="background: rgba(255, 215, 0, 0.1);">
+                    <td><strong style="color:var(--accent-gold);">Lagna (Asc)</strong></td>
+                    <td>${natalAscendant.toFixed(2)}°</td>
+                    <td>${transitAscendant.toFixed(2)}°</td>
+                    <td>${nAscInfo.signName} / ${tAscInfo.signName}</td>
+                    <td>${nAscInfo.nakshatra} (${nAscInfo.pada})</td>
+                    <td><span class="badge badge-gold">लग्न</span></td>
+                </tr>
+            `;
 
             Object.keys(natalPlanets).forEach(p => {
                 const nData = natalPlanets[p];
@@ -1147,48 +1226,266 @@
             container.innerHTML = html;
         }
 
+        // Mathematical Vimshottari Calculation Engine
+        function getVimshottariDashaTree(birthDateObj, moonDeg, targetDateObj) {
+            const nakSpan = 360 / 27; // 13.3333333 degrees
+            const nakIdx = Math.floor(moonDeg / nakSpan);
+            const nakProgress = (moonDeg % nakSpan) / nakSpan;
+            
+            const startLordIdx = nakIdx % 9;
+            const startLordYears = DASHA_YEARS[startLordIdx];
+            
+            const elapsedYears = startLordYears * nakProgress;
+            const remainingYears = startLordYears * (1 - nakProgress);
+            
+            let mdStartDate = new Date(birthDateObj.getTime() - elapsedYears * 365.25 * 86400000);
+            
+            let dashaList = [];
+            let activeMD = null, activeAD = null, activePD = null;
+            
+            for (let i = 0; i < 9; i++) {
+                let lordIdx = (startLordIdx + i) % 9;
+                let lordName = DASHA_LORDS[lordIdx];
+                let years = DASHA_YEARS[lordIdx];
+                
+                let mdEndDate = new Date(mdStartDate.getTime() + years * 365.25 * 86400000);
+                let isMDActive = (targetDateObj >= mdStartDate && targetDateObj < mdEndDate);
+                
+                let mdObj = {
+                    lord: lordName,
+                    lordIdx: lordIdx,
+                    start: new Date(mdStartDate),
+                    end: new Date(mdEndDate),
+                    isActive: isMDActive,
+                    antardashas: []
+                };
+                
+                let adStartDate = new Date(mdStartDate);
+                for (let j = 0; j < 9; j++) {
+                    let adLordIdx = (lordIdx + j) % 9;
+                    let adLordName = DASHA_LORDS[adLordIdx];
+                    let adYears = (years * DASHA_YEARS[adLordIdx]) / 120;
+                    let adEndDate = new Date(adStartDate.getTime() + adYears * 365.25 * 86400000);
+                    let isADActive = isMDActive && (targetDateObj >= adStartDate && targetDateObj < adEndDate);
+                    
+                    let adObj = {
+                        lord: adLordName,
+                        lordIdx: adLordIdx,
+                        start: new Date(adStartDate),
+                        end: new Date(adEndDate),
+                        isActive: isADActive,
+                        pratyantardashas: []
+                    };
+                    
+                    if (isADActive) {
+                        let pdStartDate = new Date(adStartDate);
+                        for (let k = 0; k < 9; k++) {
+                            let pdLordIdx = (adLordIdx + k) % 9;
+                            let pdLordName = DASHA_LORDS[pdLordIdx];
+                            let pdYears = (adYears * DASHA_YEARS[pdLordIdx]) / 120;
+                            let pdEndDate = new Date(pdStartDate.getTime() + pdYears * 365.25 * 86400000);
+                            let isPDActive = (targetDateObj >= pdStartDate && targetDateObj < pdEndDate);
+                            
+                            let pdObj = {
+                                lord: pdLordName,
+                                lordIdx: pdLordIdx,
+                                start: new Date(pdStartDate),
+                                end: new Date(pdEndDate),
+                                isActive: isPDActive
+                            };
+                            
+                            if (isPDActive) activePD = pdObj;
+                            adObj.pratyantardashas.push(pdObj);
+                            pdStartDate = new Date(pdEndDate);
+                        }
+                        activeAD = adObj;
+                    }
+                    
+                    mdObj.antardashas.push(adObj);
+                    adStartDate = new Date(adEndDate);
+                }
+                
+                if (isMDActive) activeMD = mdObj;
+                dashaList.push(mdObj);
+                mdStartDate = new Date(mdEndDate);
+            }
+            
+            return {
+                dashaList,
+                activeMD,
+                activeAD,
+                activePD,
+                balanceYears: remainingYears,
+                birthLord: DASHA_LORDS[startLordIdx]
+            };
+        }
+
+        function formatDate(d) {
+            if (!d) return "-";
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${day}/${month}/${year}`;
+        }
+
         function renderTab6() {
             const summary = document.getElementById('dashaSummary');
             const tbody = document.querySelector('#dashaTable tbody');
+            const hitsContainer = document.getElementById('dashaHitsAnalysis');
             tbody.innerHTML = '';
+            hitsContainer.innerHTML = '';
 
             const moonDeg = natalPlanets['Moon'].longitude;
-            const nakIdx = Math.floor(moonDeg / (360 / 27));
-            const lordIdx = nakIdx % 9;
-            const lordName = DASHA_LORDS[lordIdx];
+            const nakInfo = getSignDetails(moonDeg);
+
+            const bDate = new Date(document.getElementById('birthDate').value);
+            const scanD = document.getElementById('scanDate').value || new Date().toISOString().split('T')[0];
+            const scanT = document.getElementById('scanTime').value || "12:00";
+            const targetDate = new Date(`${scanD}T${scanT}:00`);
+
+            const dashaData = getVimshottariDashaTree(bDate, moonDeg, targetDate);
 
             summary.innerHTML = `
                 <div style="background:var(--bg-card); padding:10px; border-radius:8px; border-left:3px solid var(--accent-gold); font-size:12px;">
-                    <strong>जन्म नक्षत्र:</strong> ${NAKSHATRAS[nakIdx]} (${moonDeg.toFixed(2)}°)<br>
-                    <strong>महादशा स्वामी (SwissEph Balance):</strong> ${lordName}
+                    <strong>जन्म चंद्रमा नक्षत्र:</strong> ${nakInfo.nakshatra} (${moonDeg.toFixed(2)}°) - पद ${nakInfo.pada}<br>
+                    <strong>जन्म महादशा स्वामी:</strong> ${dashaData.birthLord} | <strong>जन्म के समय शेष दशा:</strong> ${dashaData.balanceYears.toFixed(2)} वर्ष<br>
+                    <strong>लक्ष्य/गोचर तिथि:</strong> ${formatDate(targetDate)}
                 </div>
             `;
 
-            const bDate = new Date(document.getElementById('birthDate').value);
-            const startYear = bDate.getFullYear();
-
-            const dashas = [
-                { level: "जन्म कालीन महादशा", lord: lordName, start: `${startYear}-06-30`, end: `${startYear + 6}-06-30` },
-                { level: "वर्तमान महादशा", lord: "राहु (Rahu)", start: "2015-06-30", end: "2033-06-30" },
-                { level: "वर्तमान अंतर्दशा", lord: "गुरु (Jupiter)", start: "2024-01-15", end: "2026-06-10" },
-                { level: "वर्तमान प्रत्यंतर्दशा", lord: "बुध (Mercury)", start: "2026-02-01", end: "2026-06-01" }
-            ];
-
-            dashas.forEach(d => {
+            // Active Dashas Rows
+            if (dashaData.activeMD) {
                 tbody.innerHTML += `
-                    <tr>
-                        <td><strong>${d.level}</strong></td>
-                        <td><span class="badge badge-gold">${d.lord}</span></td>
-                        <td>${d.start}</td>
-                        <td>${d.end}</td>
-                        <td><span class="badge badge-green">सक्रिय</span></td>
+                    <tr style="background: rgba(255,215,0,0.15);">
+                        <td><strong>महादशा (MD)</strong></td>
+                        <td><span class="badge badge-gold">${dashaData.activeMD.lord}</span></td>
+                        <td>${formatDate(dashaData.activeMD.start)}</td>
+                        <td>${formatDate(dashaData.activeMD.end)}</td>
+                        <td><span class="badge badge-green">सक्रिय (Active)</span></td>
+                    </tr>
+                `;
+            }
+
+            if (dashaData.activeAD) {
+                tbody.innerHTML += `
+                    <tr style="background: rgba(0,242,254,0.15);">
+                        <td><strong>अंतर्दशा (AD)</strong></td>
+                        <td><span class="badge badge-cyan">${dashaData.activeAD.lord}</span></td>
+                        <td>${formatDate(dashaData.activeAD.start)}</td>
+                        <td>${formatDate(dashaData.activeAD.end)}</td>
+                        <td><span class="badge badge-green">सक्रिय (Active)</span></td>
+                    </tr>
+                `;
+            }
+
+            if (dashaData.activePD) {
+                tbody.innerHTML += `
+                    <tr style="background: rgba(168,85,247,0.15);">
+                        <td><strong>प्रत्यंतर्दशा (PD)</strong></td>
+                        <td><span class="badge badge-purple">${dashaData.activePD.lord}</span></td>
+                        <td>${formatDate(dashaData.activePD.start)}</td>
+                        <td>${formatDate(dashaData.activePD.end)}</td>
+                        <td><span class="badge badge-green">सक्रिय (Active)</span></td>
+                    </tr>
+                `;
+            }
+
+            // Overview Table of Mahadashas
+            dashaData.dashaList.forEach(md => {
+                const isCurrent = md.isActive;
+                tbody.innerHTML += `
+                    <tr style="${isCurrent ? 'font-weight:bold;' : 'opacity:0.8;'}">
+                        <td>महादशा चक्र</td>
+                        <td>${md.lord}</td>
+                        <td>${formatDate(md.start)}</td>
+                        <td>${formatDate(md.end)}</td>
+                        <td>${isCurrent ? '<span class="badge badge-gold">वर्तमान</span>' : (targetDate > md.end ? 'समाप्त' : 'आगामी')}</td>
                     </tr>
                 `;
             });
+
+            // DASHA LORDS TRANSIT & NATAL HITS ANALYSIS
+            const orbLimit = parseFloat(document.getElementById('orb').value);
+            const activeLords = [
+                { type: "महादशा (MD)", lord: dashaData.activeMD ? dashaData.activeMD.lord : null, badge: "badge-gold" },
+                { type: "अंतर्दशा (AD)", lord: dashaData.activeAD ? dashaData.activeAD.lord : null, badge: "badge-cyan" },
+                { type: "प्रत्यंतर्दशा (PD)", lord: dashaData.activePD ? dashaData.activePD.lord : null, badge: "badge-purple" }
+            ];
+
+            let hitsHtml = '';
+
+            activeLords.forEach(al => {
+                if (!al.lord || !natalPlanets[al.lord]) return;
+
+                const lordName = al.lord;
+                const nDeg = natalPlanets[lordName].longitude;
+                const tDeg = transitPlanets[lordName].longitude;
+
+                const nSign = getSignDetails(nDeg);
+                const tSign = getSignDetails(tDeg);
+
+                hitsHtml += `
+                    <div class="hit-box">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                            <strong style="color:var(--accent-gold); font-size:13px;">${al.type}: ${lordName}</strong>
+                            <span class="badge ${al.badge}">${lordName}</span>
+                        </div>
+                        <div style="font-size:11px; color:var(--text-sub);">
+                            • <strong>नेटल स्थान:</strong> ${nSign.signName} (${nDeg.toFixed(2)}°) | ${nSign.nakshatra}<br>
+                            • <strong>गोचर स्थिति:</strong> ${tSign.signName} (${tDeg.toFixed(2)}°) | ${tSign.nakshatra}
+                        </div>
+                        <div style="margin-top:6px; font-size:11px;">
+                            <strong style="color:var(--accent-cyan);">⚡ दशा स्वामी पर गोचर ग्रहों के मुख्य हिट्स (Transit Hits on Natal ${lordName}):</strong>
+                `;
+
+                let hitsFound = false;
+
+                // 1. Transit planets hitting Natal Dasha Lord
+                Object.keys(transitPlanets).forEach(tp => {
+                    const diff = Math.abs(transitPlanets[tp].longitude - nDeg) % 360;
+                    const angle = diff > 180 ? 360 - diff : diff;
+
+                    if (Math.abs(angle - 0) <= orbLimit) {
+                        hitsFound = true;
+                        hitsHtml += `<div style="color:var(--accent-gold);">• गोचर ${tp} ➔ जन्म ${lordName} पर <strong>0° युति</strong> (Angle: ${angle.toFixed(1)}°)</div>`;
+                    } else if (Math.abs(angle - 120) <= orbLimit) {
+                        hitsFound = true;
+                        hitsHtml += `<div style="color:var(--accent-green);">• गोचर ${tp} ➔ जन्म ${lordName} पर <strong>120° त्रिकोण (1-5-9) हिट</strong> (Angle: ${angle.toFixed(1)}°)</div>`;
+                    } else if (Math.abs(angle - 180) <= orbLimit) {
+                        hitsFound = true;
+                        hitsHtml += `<div style="color:var(--accent-red);">• गोचर ${tp} ➔ जन्म ${lordName} पर <strong>180° प्रतियुति</strong> (Angle: ${angle.toFixed(1)}°)</div>`;
+                    }
+                });
+
+                // 2. Transit Dasha Lord hitting Natal Planets
+                hitsHtml += `<div style="margin-top:4px; color:var(--accent-green);"><strong>🌟 गोचर दशा स्वामी (${lordName}) का जन्म ग्रहों पर प्रभाव:</strong></div>`;
+                let transitHitsFound = false;
+
+                Object.keys(natalPlanets).forEach(np => {
+                    if (np === lordName) return;
+                    const diff = Math.abs(tDeg - natalPlanets[np].longitude) % 360;
+                    const angle = diff > 180 ? 360 - diff : diff;
+
+                    if (Math.abs(angle - 0) <= orbLimit) {
+                        transitHitsFound = true;
+                        hitsHtml += `<div style="color:var(--accent-gold);">• गोचर ${lordName} ➔ जन्म ${np} पर <strong>0° युति</strong></div>`;
+                    } else if (Math.abs(angle - 120) <= orbLimit) {
+                        transitHitsFound = true;
+                        hitsHtml += `<div style="color:var(--accent-green);">• गोचर ${lordName} ➔ जन्म ${np} पर <strong>120° त्रिकोण (1-5-9) दृष्टि</strong></div>`;
+                    }
+                });
+
+                if (!hitsFound) hitsHtml += `<div style="color:var(--text-sub);">• जन्म ${lordName} पर कोई प्रत्यक्ष गोचर दृष्टि/त्रिकोण नहीं है।</div>`;
+                if (!transitHitsFound) hitsHtml += `<div style="color:var(--text-sub);">• गोचर ${lordName} का जन्म ग्रहों पर कोई मुख्य त्रिकोण हिट नहीं है।</div>`;
+
+                hitsHtml += `</div></div>`;
+            });
+
+            hitsContainer.innerHTML = hitsHtml || '<p style="color:var(--text-sub); font-size:12px;">दशा स्वामी विश्लेषण उपलब्ध नहीं है।</p>';
         }
 
         window.onload = function() {
-            recalculateAll();
+            setCurrentTransitTime();
         };
     </script>
 </body>
